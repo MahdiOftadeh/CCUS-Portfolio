@@ -216,3 +216,50 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# ==========================================
+# Research, Machine Learning & Simulation
+# ==========================================
+
+# Raw & Processed Datasets (keep repo lightweight)
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+*.parquet
+*.h5
+*.hdf5
+*.mat
+*.pkl
+*.pickle
+
+# Model Checkpoints & Weights
+models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.weights
+
+# Experiment Outputs, Logs & Convergence Histories
+results/
+outputs/
+logs/
+experiments/runs/
+wandb/
+tensorboard/
+mlruns/
+
+# Large DFT / Simulation outputs (if applicable)
+*.vasp
+*.poscar
+*.contcar
+*.cif.bak
+OUTCAR
+CHGCAR
+WAVECAR
+
+# OS-specific clutter
+.DS_Store
+Thumbs.db
+Desktop.ini
+
