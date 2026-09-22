@@ -1,113 +1,209 @@
-# src/models/column.py
+"""
+1D Dynamic Model for Adsorption Column Simulation Module.
+Developed based on VSA/TVSA process modeling and gas-solid mass balance.
+"""
+
+from typing import Dict, Optional, Tuple
 import numpy as np
 from scipy.integrate import solve_ivp
-from typing import Dict, Any
 
-from src.solvers.spatial_discretization import FiniteDifference1D
-from src.kinetics.ldf import LinearDrivingForce
 from src.thermodynamics.dual_site_langmuir import DualSiteLangmuir
+from src.kinetics.ldf import LinearDrivingForce
+from src.hydrodynamics.ergun import ErgunEquation
 
+# Universal Gas Constant [J / (mol * K)]
+R_GAS = 8.314462618
 
 
 class AdsorptionColumn1D:
     """
-    1D Dynamic Packed Bed Adsorption Column Model.
-    Solves mass balance coupled with LDF kinetics and equilibrium isotherms.
+    Dynamic 1D Model for Fixed-Bed Adsorption Column.
+
+    Governing Equations:
+    1. Gas phase mass balance (convection + mass transfer to solid)
+    2. Solid phase adsorption kinetics (Linear Driving Force - LDF)
+    3. Gas-solid thermodynamic equilibrium (Dual-Site Langmuir Isotherm)
+    4. Hydrodynamic pressure drop across the bed (Ergun Equation)
     """
+
     def __init__(
         self,
         length: float,
         diameter: float,
-        bed_porosity: float,
-        particle_density: float,
-        num_nodes: int,
+        voidage: float,
+        bulk_density: float,
+        n_nodes: int,
         isotherm: DualSiteLangmuir,
         kinetics: LinearDrivingForce,
+        hydrodynamics: ErgunEquation,
     ):
-        self.L = length
-        self.D = diameter
-        self.eps_b = bed_porosity
-        self.rho_s = particle_density
-        self.N = num_nodes
-        
+        """
+        Initializes the column's geometric and physical parameters.
+
+        Parameters:
+        -----------
+        length : float
+            Column length [m]
+        diameter : float
+            Column inner diameter [m]
+        voidage : float
+            Bed porosity (Void Fraction) [-]
+        bulk_density : float
+            Bed bulk density [kg/m^3]
+        n_nodes : int
+            Number of spatial discretization nodes along the column length
+        isotherm : DualSiteLangmuir
+            Thermodynamic equilibrium model instance
+        kinetics : LinearDrivingForce
+            Mass transfer kinetics model instance
+        hydrodynamics : ErgunEquation
+            Hydrodynamic pressure drop model instance
+        """
+        self.length = length
+        self.diameter = diameter
+        self.voidage = voidage
+        self.bulk_density = bulk_density
+        self.n_nodes = n_nodes
+
         self.isotherm = isotherm
         self.kinetics = kinetics
-        self.grid = FiniteDifference1D(bed_length=length, num_nodes=num_nodes)
-        
-        # Cross-sectional area
-        self.area = np.pi * (diameter / 2.0)**2
+        self.hydrodynamics = hydrodynamics
 
-    def _ode_system(self, t: float, y: np.ndarray, u_feed: float, c_inlet: float, T: float, P: float) -> np.ndarray:
+        # Spatial step size [m]
+        self.dz = length / n_nodes
+
+    def _ode_system(
+        self,
+        t: float,
+        y: np.ndarray,
+        u_feed: float,
+        c_inlet: np.ndarray,
+        temperature: float,
+    ) -> np.ndarray:
         """
-        Right-hand side of ODEs: dy/dt = f(t, y)
-        y vector layout:
-        y[0 : N]     = C (Gas phase concentration along bed, mol/m3)
-        y[N : 2*N]   = q (Solid phase loading along bed, mol/kg)
+        System of Ordinary Differential Equations (ODEs) derived from spatial discretization (Method of Lines).
+
+        Arrangement of the state variable vector y:
+        - y[0 : N*n_comp] : Gas phase concentrations C [mol/m^3]
+        - y[N*n_comp : 2*N*n_comp] : Solid phase loading q [mol/kg]
         """
-        N = self.N
-        C = y[0:N]
-        q = y[N:2*N]
+        n_comp = len(self.isotherm.components)
+        N = self.n_nodes
 
-        # 1. Calculate equilibrium loading q* at local gas concentration C
-        # Ideal gas law assumption for partial pressure: P_i = C_i * R * T
-        R_gas = 8.314  # J/(mol.K)
-        p_co2 = C * R_gas * T  # Pa
-        
-        # Local equilibrium loading q*
-        q_star = self.isotherm.loading(pressure=p_co2, temperature=T)
+        # Reshape state vector into (N, n_comp) matrices
+        C = y[: N * n_comp].reshape((N, n_comp))
+        q = y[N * n_comp :].reshape((N, n_comp))
 
-        # 2. Kinetic mass transfer rate: dq/dt = k_ldf * (q* - q)
-        dq_dt = self.kinetics.rate(q_equilibrium=q_star, q_current=q)
+        dC_dt = np.zeros_like(C)
+        dq_dt = np.zeros_like(q)
 
-        # 3. Gas phase advective spatial derivative: d(u*C)/dz
-        # Enforce inlet boundary condition
-        C_with_bc = C.copy()
-        C_with_bc[0] = c_inlet
-        dC_dz = self.grid.first_derivative_upwind(field=C_with_bc, velocity=u_feed)
+        # Ratio of solid bed volume to void gas volume inside pores
+        solid_to_gas_ratio = (1.0 - self.voidage) * self.bulk_density / self.voidage
 
-        # 4. Gas phase mass balance:
-        # eps_b * dC/dt = - u * dC/dz - (1 - eps_b) * rho_s * dq/dt
-        dC_dt = (- u_feed * dC_dz - (1.0 - self.eps_b) * self.rho_s * dq_dt) / self.eps_b
+        # Calculate rates at each spatial node
+        for i in range(N):
+            c_node = C[i, :]
+            q_node = q[i, :]
 
-        # Pack derivatives
-        return np.concatenate([dC_dt, dq_dt])
+            # 1. Calculate partial pressures of components using Ideal Gas Law and convert Pa to bar
+            # P_i = C_i * R * T [Pa] -> divided by 1e5 to convert to bar for Langmuir model
+            p_partial_bar = (c_node * R_GAS * temperature) / 1.0e5
+
+            # 2. Calculate equilibrium loading from Dual-Site Langmuir isotherm [mol/kg]
+            q_star = self.isotherm.loading(partial_pressures=p_partial_bar, temperature=temperature)
+
+            # 3. Calculate mass transfer kinetics rate (LDF) [mol/(kg * s)]
+            rate_solid = self.kinetics.calculate_rate(q_equilibrium=q_star, q_actual=q_node)
+            dq_dt[i, :] = rate_solid
+
+            # 4. Calculate gas phase mass balance using first-order Upwind differencing
+            # Inlet boundary condition (node zero) and interior nodes
+            if i == 0:
+                dC_dz = (c_node - c_inlet) / self.dz
+            else:
+                dC_dz = (c_node - C[i - 1, :]) / self.dz
+
+            # dC/dt = - (u / eps) * (dC/dz) - ((1 - eps) * rho_s / eps) * (dq/dt)
+            dC_dt[i, :] = - (u_feed / self.voidage) * dC_dz - solid_to_gas_ratio * rate_solid
+
+        # Return the concatenated array of time derivatives
+        return np.concatenate([dC_dt.flatten(), dq_dt.flatten()])
 
     def simulate_adsorption_step(
         self,
         duration: float,
         u_feed: float,
-        c_inlet: float,
+        c_inlet: np.ndarray,
         temperature: float,
-        pressure: float,
-        initial_C: np.ndarray = None,
-        initial_q: np.ndarray = None
-    ) -> Dict[str, Any]:
+        initial_C: Optional[np.ndarray] = None,
+        initial_q: Optional[np.ndarray] = None,
+        n_time_points: int = 100,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
-        Simulates an adsorption step (breakthrough curve).
+        Simulates the adsorption step (column feed and breakthrough curve generation).
+
+        Parameters:
+        -----------
+        duration : float
+            Duration of the adsorption simulation step [seconds]
+        u_feed : float
+            Superficial gas velocity [m/s]
+        c_inlet : np.ndarray
+            Inlet concentration of components to the column [mol/m^3]
+        temperature : float
+            Operating temperature of the column [K]
+        initial_C : Optional[np.ndarray]
+            Initial gas phase concentration (default: clean column, zero)
+        initial_q : Optional[np.ndarray]
+            Initial solid phase loading (default: fully regenerated adsorbent, zero)
+        n_time_points : int
+            Number of time points for output data storage
+
+        Returns:
+        -------
+        Tuple[np.ndarray, np.ndarray, np.ndarray]
+            - t_eval : Time array [seconds]
+            - C_history : Gas phase concentration history (shape: time, column length, components)
+            - q_history : Solid phase loading history (shape: time, column length, components)
         """
-        N = self.N
+        n_comp = len(self.isotherm.components)
+        N = self.n_nodes
+
+        # Set initial conditions if not provided
         if initial_C is None:
-            initial_C = np.zeros(N)
+            initial_C = np.zeros((N, n_comp))
         if initial_q is None:
-            initial_q = np.zeros(N)
+            initial_q = np.zeros((N, n_comp))
 
-        y0 = np.concatenate([initial_C, initial_q])
-        t_span = (0.0, duration)
-        t_eval = np.linspace(0.0, duration, 100)
+        # Construct the initial state vector y0
+        y0 = np.concatenate([initial_C.flatten(), initial_q.flatten()])
 
-        # Solve system of ODEs
-        sol = solve_ivp(
-            fun=lambda t, y: self._ode_system(t, y, u_feed, c_inlet, temperature, pressure),
-            t_span=t_span,
+        # Time points for output evaluation
+        t_eval = np.linspace(0.0, duration, n_time_points)
+
+        # Solve the stiff ODE system using the stable Radau method
+        solution = solve_ivp(
+            fun=self._ode_system,
+            t_span=(0.0, duration),
             y0=y0,
             t_eval=t_eval,
-            method='Radau'  # Stiff solver for fast kinetics/steep breakthrough fronts
+            method="Radau",
+            args=(u_feed, np.asarray(c_inlet), temperature),
+            rtol=1e-5,
+            atol=1e-7,
         )
 
-        return {
-            "time": sol.t,
-            "z_grid": self.grid.z_grid,
-            "C_history": sol.y[0:N, :],         # shape: (N, num_time_steps)
-            "q_history": sol.y[N:2*N, :],       # shape: (N, num_time_steps)
-            "breakthrough_C": sol.y[N - 1, :]   # Outlet concentration over time
-        }
+        if not solution.success:
+            raise RuntimeError(f"ODE solver convergence failed: {solution.message}")
+
+        # Reshape output data
+        n_steps = len(solution.t)
+        C_history = np.zeros((n_steps, N, n_comp))
+        q_history = np.zeros((n_steps, N, n_comp))
+
+        for step in range(n_steps):
+            y_step = solution.y[:, step]
+            C_history[step] = y_step[: N * n_comp].reshape((N, n_comp))
+            q_history[step] = y_step[N * n_comp :].reshape((N, n_comp))
+
+        return solution.t, C_history, q_history

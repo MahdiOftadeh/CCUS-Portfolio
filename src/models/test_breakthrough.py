@@ -22,75 +22,103 @@ from src.models.column import AdsorptionColumn1D
 
 def main() -> None:
     # ---------------- Isotherm parameters (Dual Site Langmuir) ----------------
-    # Placeholder values: replace with fitted parameters for Zeolite 13X / Mg-MOF-74.
+    # Representative parameters for Zeolite 13X (CO2 / N2)
     params = [
         DSLParameters(
             name="CO2",
-            q_sat1=3.0, b1=1e-6,       # site 1: saturation capacity [mol/kg], affinity [1/Pa]
-            q_sat2=1.0, b2=1e-8,       # site 2
+            q_sat1=3.5,            # [mol/kg]
+            q_sat2=1.5,            # [mol/kg]
+            b0_1=1.2,              # [1/bar]
+            b0_2=0.08,             # [1/bar]
+            dH_1=-38000.0,         # [J/mol]
+            dH_2=-25000.0,         # [J/mol]
+            T_ref=298.15           # [K]
         ),
         DSLParameters(
             name="N2",
-            q_sat1=0.5, b1=1e-8,
-            q_sat2=0.0, b2=1e-10,
+            q_sat1=1.0,            # [mol/kg]
+            q_sat2=0.5,            # [mol/kg]
+            b0_1=0.02,             # [1/bar]
+            b0_2=0.005,            # [1/bar]
+            dH_1=-15000.0,         # [J/mol]
+            dH_2=-10000.0,         # [J/mol]
+            T_ref=298.15           # [K]
         ),
     ]
     isotherm = DualSiteLangmuir(params)
 
     # ---------------- Kinetics (Linear Driving Force) ----------------
-    ldf = LinearDrivingForce({"CO2": 0.05, "N2": 0.15})  # LDF coefficients [1/s]
+    ldf = LinearDrivingForce({"CO2": 0.05, "N2": 0.15})  # [1/s]
 
     # ---------------- Hydrodynamics (Ergun) ----------------
     ergun = ErgunEquation(
-        particle_diameter=0.002,   # [m]
-        bed_porosity=0.4,
-        gas_viscosity=1.8e-5,      # [Pa.s]
+        bed_porosity=0.37,
+        particle_diameter=0.002    # [m]
     )
 
-    # ---------------- Column 1D ----------------
+    # ---------------- Column Setup ----------------
     column = AdsorptionColumn1D(
-        num_nodes=20,
-        column_length=1.0,         # [m]
-        column_diameter=0.05,      # [m]
-        particle_density=1200.0,   # [kg/m3] (bulk-like reference density)
+        length=1.0,                # [m]
+        diameter=0.05,             # [m]
+        voidage=0.35,
+        bulk_density=650.0,        # [kg/m^3]
+        n_nodes=50,
         isotherm=isotherm,
         kinetics=ldf,
+        hydrodynamics=ergun
     )
 
-    # ---------------- Simulate the adsorption step ----------------
-    pressure = 1e5        # 1 bar [Pa]
-    temperature = 298.0   # [K]
-    u_feed = 0.1          # superficial velocity [m/s]
-    c_inlet = 5.0         # inlet gas-phase concentration [mol/m3]
-    duration = 600.0      # [s]
+    # ---------------- Simulation inputs ----------------
+    temperature = 298.15             # Operating temperature [K]
+    u_feed = 0.1                     # Superficial velocity [m/s]
+    c_inlet = np.array([5.0, 20.0])  # Inlet concentrations [mol/m^3] (CO2, N2)
+    duration = 600.0                 # Adsorption duration [s]
 
-    result = column.simulate_adsorption_step(
+    print("Running breakthrough simulation...")
+    t_eval, C_history, q_history = column.simulate_adsorption_step(
         duration=duration,
         u_feed=u_feed,
         c_inlet=c_inlet,
         temperature=temperature,
-        pressure=pressure,
     )
 
-    time = result["time"]
-    breakthrough = result["breakthrough_C"]
+    # Outlet concentration is at the last spatial node (-1)
+    # Shape of C_history is typically (n_components, n_nodes, n_time) or (n_time, n_components, n_nodes)
+    # Depending on column.py, outlet concentration for CO2 (index 0) over time:
+        # Ensure correct indexing based on C_history shape
+    if C_history.shape[0] == len(params):
+        co2_outlet = C_history[0, -1, :]
+        n2_outlet = C_history[1, -1, :]
+    elif C_history.shape[1] == len(params):
+        co2_outlet = C_history[:, 0, -1]
+        n2_outlet = C_history[:, 1, -1]
+    else:
+        co2_outlet = C_history[:, -1, 0]
+        n2_outlet = C_history[:, -1, 1]
+
+
+    # ---------------- Ensure Results Directory Exists ----------------
+    results_dir = ROOT / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
 
     # ---------------- Plot ----------------
     plt.figure(figsize=(8, 5))
-    plt.plot(time, breakthrough, lw=2, label="Outlet concentration")
-    plt.axhline(c_inlet, color="r", ls="--", lw=1, label=f"C_inlet = {c_inlet} mol/m3")
+    plt.plot(t_eval, co2_outlet, lw=2, color="crimson", label=f"CO2 Outlet (Feed={c_inlet[0]:.1f} mol/m³)")
+    plt.plot(t_eval, n2_outlet, lw=2, color="navy", label=f"N2 Outlet (Feed={c_inlet[1]:.1f} mol/m³)")
+    plt.axhline(c_inlet[0], color="crimson", ls="--", alpha=0.6, label="CO2 Feed")
+    plt.axhline(c_inlet[1], color="navy", ls="--", alpha=0.6, label="N2 Feed")
     plt.xlabel("Time [s]")
-    plt.ylabel("Outlet concentration C [mol/m3]")
-    plt.title("Breakthrough Curve — CO2 Adsorption (1D column)")
+    plt.ylabel("Concentration [mol/m³]")
+    plt.title("Breakthrough Curves — Zeolite 13X (1D Adsorption Column)")
     plt.grid(True, alpha=0.4)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(ROOT / "results" / "breakthrough_curve.png", dpi=150)
-    plt.show()
 
-    print("Simulation finished.")
-    print(f"Final outlet concentration: {breakthrough[-1]:.4f} mol/m3")
-    print(f"C_inlet:                   {c_inlet:.4f} mol/m3")
+    output_path = results_dir / "breakthrough_curve.png"
+    plt.savefig(output_path, dpi=150)
+    print("Simulation finished successfully.")
+    print(f"Final CO2 outlet concentration: {co2_outlet[-1]:.4f} mol/m3")
+    print(f"Plot saved to: {output_path}")
 
 
 if __name__ == "__main__":
