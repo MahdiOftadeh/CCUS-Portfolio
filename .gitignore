@@ -223,7 +223,7 @@ __marimo__/
 # Raw & Processed Datasets (keep repo lightweight)
 data/raw/
 data/processed/
-*.csv
+#.csv
 *.xlsx
 *.parquet
 *.h5
