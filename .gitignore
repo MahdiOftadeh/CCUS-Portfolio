@@ -241,7 +241,7 @@ models/checkpoints/
 *.weights
 
 # Experiment Outputs, Logs & Convergence Histories
-results/
+#results/
 outputs/
 logs/
 experiments/runs/
