@@ -97,8 +97,8 @@ y0[N_nodes:2*N_nodes] = c_feed_N2  # c_N2(z, 0)
 q_star_init_CO2, q_star_init_N2 = isotherm(np.zeros(N_nodes), np.full(N_nodes, c_feed_N2))
 y0[3*N_nodes:4*N_nodes] = q_star_init_N2
 
-t_span = (0.0, 3500.0)  # 3500 seconds simulation
-t_eval = np.linspace(0.0, 3500.0, 500)
+t_span = (0.0, 2000.0)  # 2000 seconds simulation
+t_eval = np.linspace(0.0, 2000.0, 500)
 
 sol = solve_ivp(model_ode, t_span, y0, t_eval=t_eval, method='BDF')
 
