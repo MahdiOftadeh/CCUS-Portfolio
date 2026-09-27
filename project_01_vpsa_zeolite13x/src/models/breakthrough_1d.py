@@ -119,3 +119,25 @@ plt.legend()
 plt.tight_layout()
 plt.savefig("breakthrough_curve.png", dpi=300)
 print("Simulation complete. Output saved as breakthrough_curve.png")
+# ==========================================
+# 5. Calculate MTZ and Key Performance Indicators
+# ==========================================
+norm_c_CO2 = c_out_CO2 / c_feed_CO2
+
+idx_tb = np.where(norm_c_CO2 >= 0.05)[0]
+idx_ts = np.where(norm_c_CO2 >= 0.95)[0]
+
+if len(idx_tb) > 0 and len(idx_ts) > 0:
+    t_b = sol.t[idx_tb[0]]
+    t_s = sol.t[idx_ts[0]]
+    mtz = L * (t_s - t_b) / t_s
+    
+    print("-" * 40)
+    print("Breakthrough Performance Metrics (CO2):")
+    print("Breakthrough Time (tb, 5%): {:.2f} s".format(t_b))
+    print("Saturation Time (ts, 95%):  {:.2f} s".format(t_s))
+    print("Mass Transfer Zone (MTZ):   {:.4f} m (Bed Length: {:.2f} m)".format(mtz, L))
+    print("-" * 40)
+else:
+    print("Simulation time insufficient to reach full breakthrough/saturation.")
+
