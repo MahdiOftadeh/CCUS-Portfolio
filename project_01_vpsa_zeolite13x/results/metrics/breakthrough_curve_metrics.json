@@ -1,0 +1,25 @@
+﻿{
+  "phase": 2,
+  "target_figure": "results/figures/breakthrough_curve.png",
+  "description": "1D Dynamic Column Breakthrough Simulation Metrics",
+  "simulation_settings": {
+    "numerical_method": "Method of Lines (MoL)",
+    "solver": "BDF (Stiff ODE Solver)",
+    "spatial_grid_points": 50,
+    "adsorbent": "Zeolite 13X"
+  },
+  "results": {
+    "breakthrough_time_tb_s": 641.28,
+    "saturation_time_ts_s": 953.91,
+    "mtz_length_m": 0.1639,
+    "units": {
+      "time": "seconds",
+      "length": "meters"
+    }
+  },
+  "operating_conditions": {
+    "feed_co2_mole_fraction": 0.15,
+    "interstitial_velocity_m_per_s": 0.05,
+    "bed_length_m": 0.50
+  }
+}
