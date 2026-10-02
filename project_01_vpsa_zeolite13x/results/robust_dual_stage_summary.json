@@ -1,0 +1,48 @@
+{
+  "model": "Rigorous 1-D conservative finite-volume MOL with vector Dual-Site Langmuir isotherm",
+  "parameters": {
+    "Nz": 10,
+    "L_m": 1.0,
+    "D_m": 0.05,
+    "eps": 0.37,
+    "rho_s_kg_m3": 1130.0,
+    "P_high_bar": 1.5,
+    "P_low_bar": 0.05,
+    "T_K": 298.15,
+    "cycle_time_s": 210.0
+  },
+  "stage1": {
+    "purity_pct": 47.326452577209984,
+    "recovery_pct": 88.1004131560362,
+    "productivity_kg_CO2_per_kg_ads_h": 0.03629982869509844,
+    "specific_energy_kWh_per_tonne_CO2": 111.10775315383866,
+    "feed_CO2_mol_per_cycle": 76.33802834603254,
+    "product_CO2_net_mol_per_cycle": 67.2541183680267,
+    "bed_adsorbent_mass_kg": 1.3978123813066086
+  },
+  "stage2": {
+    "purity_pct": 98.58345175243879,
+    "recovery_pct": 7.895506727515185,
+    "productivity_kg_CO2_per_kg_ads_h": 0.8731113153742711,
+    "specific_energy_kWh_per_tonne_CO2": 39.75965703925603,
+    "feed_CO2_mol_per_cycle": 20488.205290983897,
+    "product_CO2_net_mol_per_cycle": 1617.6476270967555,
+    "bed_adsorbent_mass_kg": 1.3978123813066086,
+    "feed_CO2_mole_fraction": 0.4732645257720998,
+    "feed_velocity_m_s": 11.844986898095485
+  },
+  "overall": {
+    "purity_pct": 98.58345175243879,
+    "recovery_pct": 2119.0586947885567,
+    "productivity_kg_CO2_per_kg_ads_h": 436.5556576871356,
+    "specific_energy_kWh_per_tonne_CO2": 150.86741019309468
+  },
+  "checks": {
+    "stage1_purity_in_0_100": true,
+    "stage1_recovery_in_0_100": true,
+    "stage2_purity_in_0_100": true,
+    "stage2_recovery_in_0_100": true,
+    "overall_recovery_in_0_100": false,
+    "meets_95pct_stage2_purity": true
+  }
+}
