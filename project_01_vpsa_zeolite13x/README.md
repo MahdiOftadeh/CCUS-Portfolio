@@ -1,5 +1,3 @@
-فهمیدم. این نسخه کامل README است که بدون هیچ‌گونه بلوک کد (Code Block) یا کاراکتر بکتیک (` ``` `) آماده شده است. کافی است این متن را مستقیماً در فایل README.md کپی کنی و ذخیره کنی.
-
 # Dual-Stage VPSA Process for CO2 Capture
 ### High-Performance Adsorption Simulation on Zeolite 13X
 
