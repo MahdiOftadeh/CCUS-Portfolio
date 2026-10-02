@@ -12,37 +12,37 @@
     "cycle_time_s": 210.0
   },
   "stage1": {
-    "purity_pct": 47.326452577209984,
-    "recovery_pct": 88.1004131560362,
-    "productivity_kg_CO2_per_kg_ads_h": 0.03629982869509844,
-    "specific_energy_kWh_per_tonne_CO2": 111.10775315383866,
-    "feed_CO2_mol_per_cycle": 76.33802834603254,
-    "product_CO2_net_mol_per_cycle": 67.2541183680267,
+    "purity_pct": 47.32645257657055,
+    "recovery_pct": 88.10041315376291,
+    "productivity_kg_CO2_per_kg_ads_h": 0.036299828694124466,
+    "specific_energy_kWh_per_tonne_CO2": 111.10775315576467,
+    "feed_CO2_mol_per_cycle": 76.33802834595406,
+    "product_CO2_net_mol_per_cycle": 67.25411836622217,
     "bed_adsorbent_mass_kg": 1.3978123813066086
   },
   "stage2": {
-    "purity_pct": 98.58345175243879,
-    "recovery_pct": 7.895506727515185,
-    "productivity_kg_CO2_per_kg_ads_h": 0.8731113153742711,
-    "specific_energy_kWh_per_tonne_CO2": 39.75965703925603,
-    "feed_CO2_mol_per_cycle": 20488.205290983897,
-    "product_CO2_net_mol_per_cycle": 1617.6476270967555,
+    "purity_pct": 72.71218294435283,
+    "recovery_pct": 98.08787720453883,
+    "productivity_kg_CO2_per_kg_ads_h": 0.15269479075344913,
+    "specific_energy_kWh_per_tonne_CO2": 46.42614603570461,
+    "feed_CO2_mol_per_cycle": 288.41855310671383,
+    "product_CO2_net_mol_per_cycle": 282.9036362064211,
     "bed_adsorbent_mass_kg": 1.3978123813066086,
-    "feed_CO2_mole_fraction": 0.4732645257720998,
-    "feed_velocity_m_s": 11.844986898095485
+    "feed_CO2_mole_fraction": 0.47326452576570555,
+    "feed_velocity_m_s": 0.08
   },
   "overall": {
-    "purity_pct": 98.58345175243879,
-    "recovery_pct": 2119.0586947885567,
-    "productivity_kg_CO2_per_kg_ads_h": 436.5556576871356,
-    "specific_energy_kWh_per_tonne_CO2": 150.86741019309468
+    "purity_pct": 72.71218294435283,
+    "recovery_pct": 86.41582507095434,
+    "productivity_kg_CO2_per_kg_ads_h": 76.34739537672456,
+    "specific_energy_kWh_per_tonne_CO2": 157.5338991914693
   },
   "checks": {
     "stage1_purity_in_0_100": true,
     "stage1_recovery_in_0_100": true,
     "stage2_purity_in_0_100": true,
     "stage2_recovery_in_0_100": true,
-    "overall_recovery_in_0_100": false,
-    "meets_95pct_stage2_purity": true
+    "overall_recovery_in_0_100": true,
+    "meets_95pct_stage2_purity": false
   }
 }
