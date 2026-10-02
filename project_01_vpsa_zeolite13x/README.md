@@ -61,15 +61,13 @@ Engineering Philosophy: Results are framed as thermodynamic/kinetic limits. Real
 η<1
 ) and pressure drops.
 Focus: Advancing Carbon Capture, Utilization, and Storage (CCUS) process intensification.
----
----
 
 ## 👤 Author
 
 **Mahdi Oftadeh**  
-*Chemical Engineering | CCUS Researcher*
+Chemical Engineering | CCUS Researcher  
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mahdi%20Oftadeh-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mahdioftadeh/)
-[![Gmail](https://img.shields.io/badge/Gmail-mahdi.oftadeh.1449%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white)](mailto:mahdi.oftadeh.1449@gmail.com)
+[LinkedIn Profile](https://www.linkedin.com/in/mahdioftadeh/) | [Email: mahdi.oftadeh.1449@gmail.com](mailto:mahdi.oftadeh.1449@gmail.com)
+
 
 
