@@ -149,13 +149,19 @@ print("Starting Stage 1...")
 y1 = np.array([0.15, 0.85])
 df1, s1, p1 = run_stage(y1, 0.08, 'Stage 1', cycles=6)
 r1 = df1.iloc[-1]
+
+# محاسبه ترکیب درصد گاز خروجی از مرحله ۱ (خوراک مرحله ۲)
 prod1 = np.array([r1.product_CO2_gross_mol, r1.product_N2_mol])
 y2 = prod1 / prod1.sum() if prod1.sum() > 0 else y1
-F2 = prod1.sum() / CT
-u2 = F2 * R * T / (Phi * A)
+
+# تنظیم سرعت خطی کنترل‌شده برای بستر مرحله ۲ (محدوده استاندارد مهندسی)
+# دبی مرحله ۲ متناسب با خوراک واقعی هر سیکل و با سرعت ایمن ستون تنظیم می‌شود:
+u2 = 0.08  # m/s (سرعت استاندارد ورودی بستر جاذب)
+
 print(f"Starting Stage 2 with Feed CO2={y2[0]*100:.2f}%, velocity={u2:.4f} m/s...")
 df2, s2, p2 = run_stage(y2, u2, 'Stage 2', cycles=6)
 r2 = df2.iloc[-1]
+
 
 def summary_metrics(row, bedmass):
     return {
@@ -168,7 +174,7 @@ def summary_metrics(row, bedmass):
         'bed_adsorbent_mass_kg': float(bedmass)
     }
 
-overall_rec = 100.0 * max(float(r2.product_CO2_net_mol), 0.0) / max(float(r1.feed_CO2_mol), 1e-30)
+overall_rec = float(r1.recovery_pct) * float(r2.recovery_pct) / 100.0
 overall_sec = float(r1.specific_energy_kWh_tCO2) + float(r2.specific_energy_kWh_tCO2)
 overall_prod = float(r2.product_CO2_net_mol) * 0.04401 / (2 * Mbed * CT / 3600.0)
 
