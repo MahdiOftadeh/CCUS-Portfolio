@@ -1,0 +1,58 @@
+{
+  "adsorbent": "Zeolite 13X",
+  "adsorbate_system": "CO2/N2",
+  "bed_geometry": {
+    "length_m": 1.0,
+    "diameter_m": 0.05,
+    "voidage": 0.37,
+    "bulk_density_kg_m3": 1130.0
+  },
+  "operating_conditions": {
+    "temperature_K": 298.15,
+    "high_pressure_bar": 1.5,
+    "low_pressure_bar": 0.05,
+    "pe_pressure_bar": 0.95,
+    "intermediate_pressure_bar": 0.4,
+    "cycle_time_s": 210.0,
+    "feed_superficial_velocity_m_s": 0.08
+  },
+  "isotherm_dual_site_langmuir": {
+    "qm_mol_kg": [
+      [
+        2.425,
+        1.05
+      ],
+      [
+        2.425,
+        1.05
+      ]
+    ],
+    "b0_Pa_inv": [
+      [
+        3.25e-05,
+        1.2e-06
+      ],
+      [
+        1.1e-05,
+        3e-07
+      ]
+    ],
+    "k_ldf_s_inv": [
+      0.18,
+      0.25
+    ]
+  },
+  "cycle_configuration": {
+    "stages": 2,
+    "stage2_rinse_ratio": 0.83,
+    "recycle_fraction": 0.75,
+    "steps": [
+      "Pressurization",
+      "Adsorption",
+      "CO2 Rinse",
+      "Pressure Equalization",
+      "Blowdown",
+      "Evacuation"
+    ]
+  }
+}
