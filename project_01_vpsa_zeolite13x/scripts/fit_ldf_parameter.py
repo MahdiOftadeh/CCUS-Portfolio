@@ -15,13 +15,39 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 
+def locate_data_file(project_root: Path) -> Path:
+    """Finds the dataset regardless of file extension or hidden extensions."""
+    materials_dir = project_root / "data" / "materials"
+    candidates = [
+        materials_dir / "ldf_data.csv",
+        materials_dir / "ldf_data",
+        materials_dir / "ldf_data.txt",
+        materials_dir / "ldf_data.csv.csv",
+        project_root / "data" / "ldf_data.csv",
+        project_root / "ldf_data.csv",
+    ]
+    for p in candidates:
+        if p.exists() and p.is_file():
+            return p
+    
+    # If not found in candidate paths, search materials dir directly
+    if materials_dir.exists():
+        found = list(materials_dir.glob("*ldf*"))
+        if found:
+            return found[0]
+
+    raise FileNotFoundError(
+        f"\n[Error] Could not find 'ldf_data' inside:\n"
+        f"{materials_dir}\n"
+        f"Please verify that the file exists in that directory."
+    )
+
+
 def main():
     # 1. Define project directory structure
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir.parent
 
-    # Point directly to data/materials/ldf_data.csv
-    data_path = project_root / "data" / "materials" / "ldf_data.csv"
     output_dir = project_root / "outputs" / "figures"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_plot = output_dir / "ldf_fit_validation.png"
@@ -30,16 +56,13 @@ def main():
     print("VPSA Microscale Kinetic Calibration: Glueckauf vs COMSOL")
     print("=" * 60)
 
-    # 2. Validate input file existence
-    if not data_path.exists():
-        raise FileNotFoundError(
-            f"\n[Error] Input file not found:\n{data_path}\n"
-            f"Please ensure ldf_data.csv is placed in project/data/materials/."
-        )
+    # 2. Locate data file automatically
+    data_path = locate_data_file(project_root)
+    print(f"Data file detected: {data_path.name}")
+    print(f"Path: {data_path}")
 
     # 3. Load COMSOL simulation data (handles commas and spaces, skips '%' comments)
-    print(f"Loading COMSOL data from: {data_path.name}")
-    df = pd.read_csv(data_path, comment="%", sep=r"[,\\s]+", header=None, engine="python")
+    df = pd.read_csv(data_path, comment="%", sep=r"[,\s]+", header=None, engine="python")
 
     t_data = df.iloc[:, 0].to_numpy(dtype=float)
     c_avg_data = df.iloc[:, 1].to_numpy(dtype=float)
