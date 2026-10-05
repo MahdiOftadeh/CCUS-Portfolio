@@ -242,7 +242,7 @@ models/checkpoints/
 
 # Experiment Outputs, Logs & Convergence Histories
 #results/
-outputs/
+#outputs/
 logs/
 experiments/runs/
 wandb/
