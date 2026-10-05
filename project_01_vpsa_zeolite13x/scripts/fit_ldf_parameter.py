@@ -15,7 +15,8 @@ from scipy.optimize import curve_fit
 # 1. Setup paths
 script_dir = Path(__file__).resolve().parent
 project_root = script_dir.parent
-data_path = project_root / "data" / "materials" / "ldf_data.csv"
+# اصلاح مسیر برای هماهنگی با پوشه material (بدون s)
+data_path = project_root / "data" / "material" / "ldf_data.csv"
 output_dir = project_root / "outputs" / "figures"
 output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -29,20 +30,17 @@ y_data = df['concentration'].values
 
 # 3. Define Models
 def glueckauf_model(t, k):
-    # Theoretical saturation is 40
     return 40 * (1 - np.exp(-k * t))
 
 # 4. Calibration
-# Theoretical k = 0.3000
 k_theory = 0.3000
-# Fitted k (based on prior analysis)
 k_fitted = 0.1690
 
 # Calculate predictions
 y_theory = glueckauf_model(time, k_theory)
 y_fit = glueckauf_model(time, k_fitted)
 
-# 5. Plotting (Modified to match exact specifications)
+# 5. Plotting
 plt.figure(figsize=(10, 7))
 
 # Scatter for COMSOL
@@ -54,7 +52,7 @@ plt.plot(time, y_fit, color='red', linewidth=2.5, label=f'LDF Fit (k = {k_fitted
 # Blue dashed for Glueckauf
 plt.plot(time, y_theory, color='blue', linestyle='--', linewidth=2, label=f'Glueckauf Theory (k = {k_theory:.4f} s⁻¹)', zorder=1)
 
-# Formatting per requested image
+# Formatting
 plt.title('Pellet-Scale CO2 Diffusion: COMSOL vs LDF Model', fontsize=16, fontweight='bold', pad=15)
 plt.xlabel('Time (s)', fontsize=14)
 plt.ylabel('Average Pellet Concentration (mol/m³)', fontsize=14)
