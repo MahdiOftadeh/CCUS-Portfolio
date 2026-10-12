@@ -21,7 +21,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-# Direct candidate prioritized as designated
 primary_module_name = "Thermodynamics module 0.1.py"
 primary_module_path = os.path.join(current_dir, primary_module_name)
 
@@ -79,13 +78,20 @@ fig, axs = plt.subplots(2, 3, figsize=(15.5, 9.5))
 # -----------------------------------------------------------------------------
 # 3. Model Instantiation
 # -----------------------------------------------------------------------------
-# CO2: qm0=5.50 mol/kg, b0=2.85 1/bar, t0=0.48, dH=-35500.0 J/mol
 co2_model = thermo.TemperatureDependentToth(
-    qm0=5.50, b0=2.85, t0=0.48, dH=-35500.0, T0=298.15
+    qm0=9.842, 
+    b0=0.35, 
+    t0=0.658, 
+    dH=-30731.0, 
+    T0=298.15
 )
-# N2:  qm0=2.30 mol/kg, b0=0.12 1/bar, t0=0.95, dH=-18000.0 J/mol
+
 n2_model = thermo.TemperatureDependentToth(
-    qm0=2.30, b0=0.12, t0=0.95, dH=-18000.0, T0=298.15
+    qm0=9.842, 
+    b0=0.0337, 
+    t0=0.661, 
+    dH=-14935.0, 
+    T0=298.15
 )
 
 iso_co2_298 = co2_model.at_temperature(298.15)
@@ -95,7 +101,7 @@ iast_engine = thermo.BinaryIAST(co2_model, n2_model)
 # =============================================================================
 # Panel (a): Multicomponent Equilibrium vs Cavenati (2004) Experimental Data
 # =============================================================================
-p_eval = np.linspace(0.005, 1.5, 120)
+p_eval = np.linspace(0.005, 50.0, 200)
 temp_levels = [298.15, 308.15, 323.15]
 palette = ["#1f77b4", "#ff7f0e", "#2ca02c"]
 
@@ -117,20 +123,15 @@ for T_k, col in zip(temp_levels, palette):
         label=f"N2 ({int(T_k)} K)",
     )
 
-# =============================================================================
-# Recursive CSV Lookup
-# =============================================================================
 def find_file_recursive(filename, search_root):
     for root, dirs, files in os.walk(search_root):
         if filename in files:
             return os.path.join(root, filename)
     return None
 
-# Start search from the project root (going 3 levels up from current script)
 search_start = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
 target_csv = "cavenati_isotherms_clean.csv"
 csv_file = find_file_recursive(target_csv, search_start)
-
 
 if csv_file:
     try:
@@ -216,28 +217,22 @@ axs[0, 1].axvspan(
 axs[0, 1].set_title(r"(b) Rigorous IAST Selectivity ($\alpha_{\mathrm{CO}_2/\mathrm{N}_2}$)")
 axs[0, 1].set_xlabel(r"Gas Mole Fraction $y_{\mathrm{CO}_2}$")
 axs[0, 1].set_ylabel(r"Selectivity $\alpha_{12} = (x_1/y_1)/(x_2/y_2)$")
+axs[0, 1].set_ylim(0.0, 15.0)  # Correct scale: prevents misleading visual expansion
 axs[0, 1].grid(True, linestyle=":", alpha=0.6)
 axs[0, 1].legend(loc="upper right")
 
 # =============================================================================
-# Panel (c): Heterogeneous Isosteric Heat of Adsorption
+# Panel (c): Isosteric Heat of Adsorption
 # =============================================================================
 q_range = np.linspace(0.05, 4.8, 100)
-
-if hasattr(iso_co2_298, "get_isosteric_heat"):
-    dh_co2_vals = [iso_co2_298.get_isosteric_heat(q) / 1000.0 for q in q_range]
-else:
-    # Thermodynamic derivative fallback via Clausius-Clapeyron if empirical decay not exposed
-    p_eq = [optimize.root_scalar(lambda p: iso_co2_298.loading(p) - q_val, bracket=[1e-5, 50.0], method='brentq').root for q_val in q_range]
-    dh_co2_vals = [co2_model.isosteric_heat(p, 298.15) / 1000.0 for p in p_eq]
-
+dh_co2_const = abs(co2_model.dH) / 1000.0
 dh_n2_const = abs(n2_model.dH) / 1000.0
 
 axs[0, 2].plot(
     q_range,
-    dh_co2_vals,
+    [dh_co2_const] * len(q_range),
     color="#8c564b",
-    label=r"$\mathrm{CO}_2$ (Heterogeneous Site Decay)",
+    label=rf"$\mathrm{{CO}}_2\ \mathrm{{Constant\ \Delta H}}\ ({dh_co2_const:.1f}\ \mathrm{{kJ/mol}})$",
 )
 axs[0, 2].axhline(
     dh_n2_const,
@@ -248,14 +243,14 @@ axs[0, 2].axhline(
 axs[0, 2].set_title(r"(c) Isosteric Enthalpy ($-\Delta H_{\mathrm{ads}}$)")
 axs[0, 2].set_xlabel(r"Adsorbed Phase Loading $q$ (mol/kg)")
 axs[0, 2].set_ylabel(r"$-\Delta H_{\mathrm{ads}}$ (kJ/mol)")
-axs[0, 2].set_ylim(15, 42)
+axs[0, 2].set_ylim(10.0, 42.0)  # Correct lower bound: shows N2 reference line
 axs[0, 2].grid(True, linestyle=":", alpha=0.6)
 axs[0, 2].legend(loc="upper right")
 
 # =============================================================================
 # Panel (d): Grand Potential & Inversion Solver Residual
 # =============================================================================
-p_pts = np.linspace(0.01, 1.5, 75)
+p_pts = np.linspace(0.01, 50.0, 100)
 pi_vals = np.array([iso_co2_298.spreading_pressure(p) for p in p_pts])
 p_recovered = np.array(
     [iso_co2_298.invert_spreading_pressure(pi) for pi in pi_vals]
@@ -343,6 +338,6 @@ axs[1, 2].legend(loc="lower left")
 # Save Figure
 # -----------------------------------------------------------------------------
 plt.tight_layout()
-out_file = os.path.join(current_dir, "definitive_thermo_q1_dashboard.png")
-plt.savefig(out_file, dpi=300)
+out_file = "dashboard_output.png"
+plt.savefig(out_file, dpi=300, bbox_inches='tight')
 print(f"[OK] Validation dashboard successfully generated:\n     {out_file}")
