@@ -1,36 +1,33 @@
 ﻿#!/usr/bin/env python3
 """
-github_repository_scorer.py - Unified Evidence Framework (Final)
+github_repository_scorer.py - Automatic Git Activity Scorer (100-point)
 
-Scores a Git repository 0-100 for a technical founder / elite freelancer by
-combining automatic Git analysis with optional external evidence.
+Scores a Git repository from 0 to 100 using only signals detectable from
+Git and the repository content. Designed for a technical founder or
+freelancer building a portfolio before acquiring clients.
 
-Weights:
-    AUTOMATIC (Git-only, max 65):
-        15  Delivery proxies (DORA-aligned: release tags, merges to main, CI)
-        15  Engineering acceleration & commit discipline
-        12  Production readiness (tests, error handling, CI)
-        10  Verified AI leverage (claim vs code)
-         8  Technical ownership & communication
-         5  Activity continuity
+No external_evidence.json is used. The score is honest and fully
+reproducible from the repository alone.
 
-    EXTERNAL (optional, max 35):
-        15  Verified business impact (measurable KPI changes)
-        10  Production delivery evidence (live URL / app store / deployment)
-        10  Independent validation (client testimonials / references)
+Components (sum = 100):
+    25  Delivery Evidence          (release tags, merge discipline, CI workflows)
+    20  Production Readiness       (tests, error handling, CI)
+    20  Acceleration & Discipline  (commit rate trend + message quality)
+    15  Verified AI Leverage       (AI libraries + LLM calls, claim vs code)
+    12  Ownership & Communication  (architecture docs, refactor commits, LICENSE)
+     8  Activity Continuity        (active-day ratio over the commit span)
 
-If `external_evidence.json` is missing, the automatic part is rescaled to
-100 and a clear notice is printed.
+Usage:
+    python github_repository_scorer.py
+    python github_repository_scorer.py --verbose
+    python github_repository_scorer.py --verbose --report report.md
 """
 
 import argparse
-import json
-import math
 import re
 import subprocess
 import sys
-from collections import Counter
-from datetime import datetime, date
+from datetime import datetime
 from pathlib import Path
 
 
@@ -87,32 +84,74 @@ def _read_text_safely(path, max_chars=8000):
 
 
 # --------------------------------------------------------------------------
-# AUTOMATIC COMPONENTS (max 65)
+# Component 1: Delivery Evidence (max 25)
 # --------------------------------------------------------------------------
-def _score_delivery_proxies(repo_root, file_paths, commits):
-    """15 pts: DORA-aligned proxies detectable from Git alone."""
+def _score_delivery(repo_root, file_paths, commits):
+    """Release tags (10) + merge discipline (7) + CI workflows (8)."""
     score = 0.0
     lower = {p.lower() for p in file_paths}
 
     tags = _run_git(["tag", "--list"], repo_root).splitlines()
     release_tags = [t for t in tags if re.match(r"v?\d+\.\d+", t)]
     if release_tags:
-        score += 6
+        score += 10
 
     merge_count = sum(1 for c in commits if "merge" in c["subject"].lower())
     if merge_count >= 3:
-        score += 4
+        score += 7
 
-    if any(re.search(r"\.(github/workflows|gitlab-ci|circleci)", p) for p in lower):
+    has_ci = any(re.search(r"\.(github/workflows|gitlab-ci|circleci)", p) for p in lower)
+    if has_ci:
+        score += 8
+
+    return min(25.0, score), {
+        "release_tags_present": bool(release_tags),
+        "release_tag_count": len(release_tags),
+        "merge_commits": merge_count,
+        "ci_workflows": has_ci,
+    }
+
+
+# --------------------------------------------------------------------------
+# Component 2: Production Readiness (max 20)
+# --------------------------------------------------------------------------
+def _score_production(repo_root, file_paths):
+    """Tests (8) + error handling (7) + CI (5)."""
+    score = 0.0
+    lower = {p.lower() for p in file_paths}
+
+    has_tests = any(re.search(r"(^|/)(tests?|specs?)(/|$)", p) for p in lower)
+    if has_tests:
+        score += 8
+
+    source = [p for p in file_paths if p.endswith((".py", ".js", ".ts", ".go"))]
+    handled = sum(
+        1 for rel in source[:50]
+        if re.search(r"\b(try|except|catch|raise|throw)\b",
+                     _read_text_safely(repo_root / rel, 4000), re.IGNORECASE)
+    )
+    if handled >= 2:
+        score += 7
+
+    has_ci = any(re.search(r"\.(github/workflows|gitlab-ci)", p) for p in lower)
+    if has_ci:
         score += 5
 
-    return min(15.0, score)
+    return min(20.0, score), {
+        "tests_present": has_tests,
+        "files_with_error_handling": handled,
+        "ci_present": has_ci,
+    }
 
 
-def _score_acceleration_discipline(commits):
-    """15 pts: newer-half vs older-half commit rate + message quality."""
+# --------------------------------------------------------------------------
+# Component 3: Acceleration & Discipline (max 20)
+# --------------------------------------------------------------------------
+def _score_acceleration(commits):
+    """Commit rate trend (8) + meaningful message ratio (12)."""
     if len(commits) < 5:
-        return 0.0
+        return 0.0, {"reason": "fewer than 5 commits"}
+
     score = 0.0
     mid = len(commits) // 2
     older, newer = commits[mid:], commits[:mid]
@@ -121,15 +160,15 @@ def _score_acceleration_discipline(commits):
     newer_weeks = max(1, (newer[0]["date"] - newer[-1]["date"]).days / 7) if len(newer) > 1 else 1
     older_rate, newer_rate = len(older) / older_weeks, len(newer) / newer_weeks
 
+    ratio = 0.0
     if older_rate > 0:
         ratio = newer_rate / older_rate
         if ratio >= 1.5:
-            score += 6
+            score += 8
         elif ratio >= 1.1:
-            score += 4
+            score += 5
         elif ratio >= 0.8:
-            score += 2
-        # decelerating gets 0
+            score += 3
 
     trivial = re.compile(
         r"^(update|fix|test|merge|wip|temp|tmp|minor|typo|init|initial)\b",
@@ -139,32 +178,23 @@ def _score_acceleration_discipline(commits):
         1 for c in commits
         if len(c["subject"].strip()) >= 20 and not trivial.search(c["subject"])
     )
-    ratio = meaningful / max(len(commits), 1)
-    score += min(9.0, ratio * 9)
-    return min(15.0, score)
+    meaningful_ratio = meaningful / max(len(commits), 1)
+    score += meaningful_ratio * 12
+
+    return min(20.0, score), {
+        "older_rate_per_week": round(older_rate, 2),
+        "newer_rate_per_week": round(newer_rate, 2),
+        "acceleration_ratio": round(ratio, 2),
+        "meaningful_commits": meaningful,
+        "meaningful_ratio": round(meaningful_ratio, 3),
+    }
 
 
-def _score_production_readiness(repo_root, file_paths):
-    """12 pts: tests, error handling, CI."""
-    score = 0.0
-    lower = {p.lower() for p in file_paths}
-    if any(re.search(r"(^|/)(tests?|specs?)(/|$)", p) for p in lower):
-        score += 5
-    source = [p for p in file_paths if p.endswith((".py", ".js", ".ts", ".go"))]
-    handled = sum(
-        1 for rel in source[:50]
-        if re.search(r"\b(try|except|catch|raise|throw)\b",
-                     _read_text_safely(repo_root / rel, 4000), re.IGNORECASE)
-    )
-    if handled >= 2:
-        score += 4
-    if any(re.search(r"\.(github/workflows|gitlab-ci)", p) for p in lower):
-        score += 3
-    return min(12.0, score)
-
-
+# --------------------------------------------------------------------------
+# Component 4: Verified AI (max 15)
+# --------------------------------------------------------------------------
 def _score_verified_ai(repo_root, file_paths):
-    """10 pts: AI libs + LLM calls, bonus only if README claim matches code."""
+    """AI libs (6) + LLM calls (5) + claim-code match bonus (4)."""
     score = 0.0
     ai_libs = [r"\btorch\b", r"\btensorflow\b", r"\btransformers\b", r"\bopenai\b",
                r"\blangchain\b", r"\bllama_index\b", r"\banthropic\b", r"\bcohere\b",
@@ -193,117 +223,62 @@ def _score_verified_ai(repo_root, file_paths):
             break
 
     if found_lib:
-        score += 4
+        score += 6
     if found_call:
-        score += 3
+        score += 5
     if claims_ai and (found_lib or found_call):
-        score += 3
-    return min(10.0, score)
+        score += 4
+
+    return min(15.0, score), {
+        "readme_claims_ai": claims_ai,
+        "ai_library_found": found_lib,
+        "llm_call_found": found_call,
+    }
 
 
-def _score_ownership_communication(repo_root, file_paths, commits):
-    """8 pts: architecture docs, refactor commits, LICENSE."""
+# --------------------------------------------------------------------------
+# Component 5: Ownership & Communication (max 12)
+# --------------------------------------------------------------------------
+def _score_ownership(repo_root, file_paths, commits):
+    """Architecture docs (5) + refactor commits (4) + LICENSE (3)."""
     score = 0.0
     lower = {p.lower() for p in file_paths}
-    if any("architect" in p for p in lower):
+
+    has_arch = any("architect" in p for p in lower)
+    if has_arch:
+        score += 5
+
+    refactor_count = sum(1 for c in commits if "refactor" in c["subject"].lower())
+    if refactor_count >= 3:
+        score += 4
+
+    has_license = any(p.lower().startswith(("license", "licence")) for p in file_paths)
+    if has_license:
         score += 3
-    if sum(1 for c in commits if "refactor" in c["subject"].lower()) >= 3:
-        score += 3
-    if any(p.lower().startswith(("license", "licence")) for p in file_paths):
-        score += 2
-    return min(8.0, score)
+
+    return min(12.0, score), {
+        "architecture_doc_present": has_arch,
+        "refactor_commits": refactor_count,
+        "license_present": has_license,
+    }
 
 
-def _score_activity_continuity(commits):
-    """5 pts: active-day ratio over the commit span."""
+# --------------------------------------------------------------------------
+# Component 6: Activity Continuity (max 8)
+# --------------------------------------------------------------------------
+def _score_continuity(commits):
+    """Active-day ratio over the commit span."""
     if len(commits) < 2:
-        return 0.0
+        return 0.0, {"reason": "fewer than 2 commits"}
     dates = sorted({c["date"] for c in commits})
     span = max(1, (dates[-1] - dates[0]).days + 1)
-    return min(5.0, len(dates) / span * 5)
-
-
-# --------------------------------------------------------------------------
-# EXTERNAL EVIDENCE (max 35, optional)
-# --------------------------------------------------------------------------
-def _load_external_evidence(repo_root):
-    evidence_path = repo_root / "external_evidence.json"
-    if not evidence_path.exists():
-        return None
-    try:
-        return json.loads(evidence_path.read_text(encoding="utf-8"))
-    except Exception as exc:
-        print("Warning: external_evidence.json could not be parsed: " + str(exc),
-              file=sys.stderr)
-        return None
-
-
-def _score_business_impact(evidence):
-    """15 pts: verified KPI changes (baseline -> result)."""
-    impacts = evidence.get("business_impact", [])
-    if not impacts:
-        return 0.0
-    score = 0.0
-    for item in impacts:
-        if not isinstance(item, dict):
-            continue
-        # Require baseline, result, and a verifiable source reference
-        has_baseline = item.get("baseline") not in (None, "", "N/A")
-        has_result = item.get("result") not in (None, "", "N/A")
-        has_source = bool(item.get("source", "").strip())
-        if has_baseline and has_result:
-            score += 3
-            if has_source:
-                score += 2  # bonus for verifiability
-    return min(15.0, score)
-
-
-def _score_delivery_evidence(evidence):
-    """10 pts: live URL, app store link, deployment artifacts."""
-    score = 0.0
-    if evidence.get("live_url", "").strip():
-        score += 5
-    if evidence.get("app_store_url", "").strip():
-        score += 3
-    if evidence.get("deployment_artifacts"):
-        score += 2
-    return min(10.0, score)
-
-
-def _score_independent_validation(evidence):
-    """10 pts: client testimonials / references with names or companies."""
-    validations = evidence.get("client_validations", [])
-    if not validations:
-        return 0.0
-    score = 0.0
-    for v in validations:
-        if not isinstance(v, dict):
-            continue
-        # A validation counts only if it names a client (person or company)
-        # and includes a verifiable quote or reference
-        has_client = bool(str(v.get("client", "")).strip())
-        has_quote = len(str(v.get("quote", "")).strip()) >= 20
-        has_reference = bool(str(v.get("reference", "")).strip())
-        if has_client and (has_quote or has_reference):
-            score += 3
-            if has_quote and has_reference:
-                score += 1  # extra for both quote and contactable reference
-    return min(10.0, score)
-
-
-def _compute_external_score(evidence):
-    if evidence is None:
-        return 0.0, {}, False
-    b = _score_business_impact(evidence)
-    d = _score_delivery_evidence(evidence)
-    v = _score_independent_validation(evidence)
-    total = b + d + v
-    breakdown = {
-        "ext_business_impact (15)": round(b, 1),
-        "ext_delivery_evidence (10)": round(d, 1),
-        "ext_independent_validation (10)": round(v, 1),
+    active_days = len(dates)
+    ratio = active_days / span
+    return min(8.0, ratio * 8), {
+        "active_days": active_days,
+        "span_days": span,
+        "active_ratio": round(ratio, 3),
     }
-    return round(total, 1), breakdown, True
 
 
 # --------------------------------------------------------------------------
@@ -316,42 +291,158 @@ def compute_score(repo_path):
 
     commits = _collect_commits(repo)
     if not commits:
-        return 0.0, {}, False
+        return 0.0, {}, {}
 
     file_paths = _scan_repo_files(repo)
 
-    auto = {
-        "delivery_proxies (15)": _score_delivery_proxies(repo, file_paths, commits),
-        "acceleration_discipline (15)": _score_acceleration_discipline(commits),
-        "production_readiness (12)": _score_production_readiness(repo, file_paths),
-        "verified_ai (10)": _score_verified_ai(repo, file_paths),
-        "ownership_communication (8)": _score_ownership_communication(
-            repo, file_paths, commits),
-        "activity_continuity (5)": _score_activity_continuity(commits),
+    d_score, d_details = _score_delivery(repo, file_paths, commits)
+    p_score, p_details = _score_production(repo, file_paths)
+    a_score, a_details = _score_acceleration(commits)
+    ai_score, ai_details = _score_verified_ai(repo, file_paths)
+    o_score, o_details = _score_ownership(repo, file_paths, commits)
+    c_score, c_details = _score_continuity(commits)
+
+    total = round(d_score + p_score + a_score + ai_score + o_score + c_score, 1)
+    total = max(0.0, min(100.0, total))
+
+    breakdown = {
+        "Delivery Evidence (25)": (round(d_score, 1), d_details),
+        "Production Readiness (20)": (round(p_score, 1), p_details),
+        "Acceleration & Discipline (20)": (round(a_score, 1), a_details),
+        "Verified AI (15)": (round(ai_score, 1), ai_details),
+        "Ownership & Communication (12)": (round(o_score, 1), o_details),
+        "Activity Continuity (8)": (round(c_score, 1), c_details),
     }
-    auto_total = sum(auto.values())
+    return total, breakdown, {"commits": len(commits), "files": len(file_paths)}
 
-    evidence = _load_external_evidence(repo)
-    ext_total, ext_breakdown, external_present = _compute_external_score(evidence)
 
-    if external_present:
-        # Automatic (65) + External (35)
-        final = auto_total * (100.0 / 65.0) * 0.65 + ext_total * (100.0 / 35.0) * 0.35
+# --------------------------------------------------------------------------
+# Suggestions engine
+# --------------------------------------------------------------------------
+def _generate_suggestions(breakdown):
+    suggestions = []
+
+    _, d = breakdown["Delivery Evidence (25)"]
+    if not d.get("release_tags_present"):
+        suggestions.append(
+            "Create a release tag: `git tag -a v0.1.0 -m 'First release' && git push --tags` (+10)"
+        )
+    if d.get("merge_commits", 0) < 3:
+        suggestions.append(
+            "Use feature branches and merge them to main (+7 when >= 3 merges)"
+        )
+    if not d.get("ci_workflows"):
+        suggestions.append("Add a CI workflow (.github/workflows/test.yml) (+8)")
+
+    _, p = breakdown["Production Readiness (20)"]
+    if not p.get("tests_present"):
+        suggestions.append("Add a `tests/` directory with real tests (+8)")
+    if p.get("files_with_error_handling", 0) < 2:
+        suggestions.append(
+            "Add try/except or raise statements to at least 2 source files (+7)"
+        )
+    if not p.get("ci_present"):
+        suggestions.append("Set up CI to run tests automatically (+5)")
+
+    _, a = breakdown["Acceleration & Discipline (20)"]
+    if a.get("meaningful_ratio", 1) < 0.8:
+        suggestions.append(
+            "Write descriptive commit messages (>= 20 chars, avoid 'update'/'fix' alone) (+12)"
+        )
+
+    _, ai = breakdown["Verified AI (15)"]
+    if not ai.get("ai_library_found"):
+        suggestions.append(
+            "If you use AI/ML, add the library (scikit-learn, torch, openai) to code (+6)"
+        )
+    if not ai.get("llm_call_found"):
+        suggestions.append(
+            "If you call an LLM, expose it in code (e.g., openai.chat.completions.create) (+5)"
+        )
+
+    _, o = breakdown["Ownership & Communication (12)"]
+    if not o.get("architecture_doc_present"):
+        suggestions.append("Write an `ARCHITECTURE.md` describing module layout (+5)")
+    if o.get("refactor_commits", 0) < 3:
+        suggestions.append("Use `refactor:` commit prefix for refactoring work (+4)")
+    if not o.get("license_present"):
+        suggestions.append("Add a LICENSE file (MIT, Apache-2.0, etc.) (+3)")
+
+    return suggestions
+
+
+# --------------------------------------------------------------------------
+# Markdown report
+# --------------------------------------------------------------------------
+def _write_report(score, breakdown, meta, repo_path, report_path):
+    lines = []
+    lines.append("# Git Repository Activity Report")
+    lines.append("")
+    lines.append("**Repository:** `" + Path(repo_path).resolve().name + "`  ")
+    lines.append("**Generated:** " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "  ")
+    lines.append("**Method:** 100-point automatic scoring (Git-only, no external evidence)")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("## Score Breakdown")
+    lines.append("")
+    lines.append("| Component | Score | Max |")
+    lines.append("|---|---:|---:|")
+    for name, (val, _details) in breakdown.items():
+        max_v = re.search(r"\((\d+)\)", name).group(1)
+        clean_name = re.sub(r"\s*\(\d+\)", "", name)
+        lines.append("| " + clean_name + " | " + str(val) + " | " + max_v + " |")
+    lines.append("| **Final** | **" + str(score) + "** | **100** |")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("## Final Score")
+    lines.append("")
+    lines.append("### **" + str(score) + " / 100**")
+    lines.append("")
+
+    if score >= 80:
+        interp = "Excellent — strong delivery, discipline, and impact signals."
+    elif score >= 60:
+        interp = "Good — solid foundation with visible room for growth."
+    elif score >= 40:
+        interp = "Fair — real activity, but gaps in delivery, discipline, or verification."
+    elif score >= 20:
+        interp = "Weak — limited verifiable evidence of delivery or quality."
     else:
-        # Rescale automatic 65 -> 100
-        final = auto_total * (100.0 / 65.0)
+        interp = "Very low — minimal verifiable evidence."
+    lines.append("**Interpretation:** " + interp)
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("## Detailed Signals")
+    lines.append("")
+    for name, (_val, details) in breakdown.items():
+        lines.append("### " + re.sub(r"\s*\(\d+\)", "", name))
+        lines.append("")
+        if not details:
+            lines.append("_No signals collected._")
+        else:
+            for k, v in details.items():
+                lines.append("- **" + k + ":** " + str(v))
+        lines.append("")
 
-    final = round(max(0.0, min(100.0, final)), 1)
+    suggestions = _generate_suggestions(breakdown)
+    lines.append("---")
+    lines.append("")
+    lines.append("## How to Improve Your Score")
+    lines.append("")
+    if suggestions:
+        for s in suggestions:
+            lines.append("- " + s)
+    else:
+        lines.append("All components are at maximum. Focus on shipping real releases and seeking client validation.")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("*Generated by github_repository_scorer.py (100-point, Git-only).*")
 
-    breakdown = {}
-    breakdown.update({k: round(v, 1) for k, v in auto.items()})
-    breakdown["auto_subtotal (65)"] = round(auto_total, 1)
-    if external_present:
-        breakdown.update(ext_breakdown)
-        breakdown["ext_subtotal (35)"] = ext_total
-    breakdown["external_evidence_present"] = external_present
-
-    return final, breakdown, external_present
+    Path(report_path).write_text("\n".join(lines), encoding="utf-8")
 
 
 # --------------------------------------------------------------------------
@@ -360,30 +451,36 @@ def compute_score(repo_path):
 def main():
     parser = argparse.ArgumentParser(
         prog="github_repository_scorer.py",
-        description="Unified Evidence Framework: Git analysis + optional external evidence.",
+        description="Automatic 100-point Git activity score. No external evidence.",
     )
     parser.add_argument("repo", nargs="?", default=".", help="Path to Git repo.")
     parser.add_argument("--verbose", "-v", action="store_true",
-                        help="Print breakdown before final score.")
+                        help="Print detailed breakdown before final score.")
+    parser.add_argument("--report", "-r", default=None,
+                        help="Write a detailed Markdown report to this path.")
     args = parser.parse_args()
 
     try:
-        score, breakdown, external_present = compute_score(args.repo)
+        score, breakdown, meta = compute_score(args.repo)
     except Exception as exc:
         print("Error: " + str(exc), file=sys.stderr)
         sys.exit(1)
 
     if args.verbose and breakdown:
-        print("Unified Evidence Breakdown:")
-        for k, v in breakdown.items():
-            print("  " + str(k) + ": " + str(v))
-        print()
+        print("Score Breakdown (100-point, Git-only):")
+        print("  Commits: " + str(meta.get("commits", 0)))
+        print("  Files:   " + str(meta.get("files", 0)))
+        print("")
+        for name, (val, _details) in breakdown.items():
+            max_v = re.search(r"\((\d+)\)", name).group(1)
+            clean_name = re.sub(r"\s*\(\d+\)", "", name)
+            print("  " + clean_name + ": " + str(val) + " / " + max_v)
+        print("")
 
-    if not external_present:
-        print("Notice: external_evidence.json not found. Score reflects Git-only "
-              "signals (rescaled to 100). Add external evidence to unlock the "
-              "full 35-point external layer.")
-        print()
+    if args.report:
+        _write_report(score, breakdown, meta, args.repo, args.report)
+        print("Report written to " + args.report)
+        print("")
 
     print("Final Score: " + str(score) + " / 100")
 
