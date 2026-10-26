@@ -446,6 +446,40 @@ def _write_report(score, breakdown, meta, repo_path, report_path):
 
 
 # --------------------------------------------------------------------------
+# Score summary printer
+# --------------------------------------------------------------------------
+def _print_score_summary(score, breakdown, meta, verbose=False):
+    """چاپ نمره هر بخش به‌صورت جداگانه و سپس نمره کلی."""
+    print("=" * 55)
+    print("Score Breakdown (100-point, Git-only):")
+    print("=" * 55)
+
+    if not breakdown:
+        print("No commits found to score.")
+        print("-" * 55)
+        print(f"Final Score: {score} / 100")
+        print("=" * 55)
+        return
+
+    print(f"Commits: {meta.get('commits', 0)}")
+    print(f"Files:   {meta.get('files', 0)}")
+    print("-" * 55)
+
+    for name, (val, details) in breakdown.items():
+        max_v = re.search(r"\((\d+)\)", name).group(1)
+        clean_name = re.sub(r"\s*\(\d+\)", "", name)
+        print(f"{clean_name:<32}: {val:>5} / {max_v}")
+
+        if verbose and details:
+            for key, value in details.items():
+                print(f"    - {key}: {value}")
+
+    print("-" * 55)
+    print(f"{'Final Score':<32}: {score:>5} / 100")
+    print("=" * 55)
+
+
+# --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
 def main():
@@ -455,7 +489,7 @@ def main():
     )
     parser.add_argument("repo", nargs="?", default=".", help="Path to Git repo.")
     parser.add_argument("--verbose", "-v", action="store_true",
-                        help="Print detailed breakdown before final score.")
+                        help="Print detailed signals for each component.")
     parser.add_argument("--report", "-r", default=None,
                         help="Write a detailed Markdown report to this path.")
     args = parser.parse_args()
@@ -466,23 +500,14 @@ def main():
         print("Error: " + str(exc), file=sys.stderr)
         sys.exit(1)
 
-    if args.verbose and breakdown:
-        print("Score Breakdown (100-point, Git-only):")
-        print("  Commits: " + str(meta.get("commits", 0)))
-        print("  Files:   " + str(meta.get("files", 0)))
-        print("")
-        for name, (val, _details) in breakdown.items():
-            max_v = re.search(r"\((\d+)\)", name).group(1)
-            clean_name = re.sub(r"\s*\(\d+\)", "", name)
-            print("  " + clean_name + ": " + str(val) + " / " + max_v)
-        print("")
-
+    # اگر گزارش Markdown خواسته شده، ابتدا نوشته شود
     if args.report:
         _write_report(score, breakdown, meta, args.repo, args.report)
         print("Report written to " + args.report)
         print("")
 
-    print("Final Score: " + str(score) + " / 100")
+    # همیشه نمره هر بخش و سپس نمره کلی چاپ می‌شود
+    _print_score_summary(score, breakdown, meta, verbose=args.verbose)
 
 
 if __name__ == "__main__":
