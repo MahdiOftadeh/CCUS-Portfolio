@@ -9,3 +9,10 @@ This repository contains:
 - **Public Core Interface**: Lightweight API contracts and simulation wrappers.
 
 *Note: Core proprietary industrial multi-bed PDE/LDF solvers remain closed-source.*
+
+---
+
+## AI / LLM Integration
+
+This project is part of the CCUS portfolio that includes an LLM-powered paper summarizer (llm/ package) for extracting structured summaries from CCUS research abstracts using an OpenAI-compatible API.
+
