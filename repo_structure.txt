@@ -1,0 +1,137 @@
+﻿=== DIRECTORY TREE (folders only, up to depth 4) ===
+  project_01_vpsa_zeolite13x
+    data
+    docs
+    outputs
+    scripts
+    tests
+    vpsa_commercial_suite
+    vpsa_simulation_suite
+      cycle_configs
+      material
+      datasets
+      figures
+      tables
+      figures
+      reports
+      .github
+      auxiliary units & network
+      benchmarks
+      data
+      docs
+      economics
+      examples
+      mass_transfer
+      optimization
+      solvers
+      tests
+      thermodynamics
+      transport
+      visualization
+      vpsa_core_lite
+        workflows
+        process_flow_diagrams
+
+=== PYTHON FILES BY FOLDER ===
+github_repository_scorer.py  (415 lines)
+project_01_vpsa_zeolite13x\scripts\fit_ldf_parameter.py  (86 lines)
+project_01_vpsa_zeolite13x\scripts\run_breakthrough.py  (0 lines)
+project_01_vpsa_zeolite13x\scripts\run_optimization.py  (0 lines)
+project_01_vpsa_zeolite13x\scripts\run_sweep.py  (0 lines)
+project_01_vpsa_zeolite13x\scripts\run_vpsa_cycle.py  (0 lines)
+project_01_vpsa_zeolite13x\tests\test_breakthrough.py  (0 lines)
+project_01_vpsa_zeolite13x\tests\test_cycle_css.py  (0 lines)
+project_01_vpsa_zeolite13x\tests\test_isotherm.py  (0 lines)
+project_01_vpsa_zeolite13x\tests\test_mass_balance.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\auxiliary units & network\auxiliary_units_network.py  (346 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\config.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\economics\process_kpi_technoeconomic (1).py  (412 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\mass_transfer\mass_transfer_academic_core.py  (593 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\optimization\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\optimization\doe.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\optimization\doe_targets.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\optimization\pareto.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\optimization\surrogate.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\solvers\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\solvers\base_solver.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\solvers\breakthrough.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\solvers\css.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\solvers\cycle.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\tests\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\tests\test_smoke.py  (4 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\gas_properties.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\heat_of_adsorption.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\isotherms.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\plot_thermo.py  (308 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\Thermodynamics module 0.1.py  (414 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\transport\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\transport\hydrodynamics.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\transport\kinetics.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\visualization\__init__.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\visualization\plots.py  (0 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\vpsa_core_lite\__init__.py  (1 lines)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\vpsa_core_lite\core.py  (10 lines)
+
+=== DATA / CONFIG / DOC FILES ===
+git_history_stats.txt  (59.7 KB)
+project_01_vpsa_zeolite13x\data\cycle_configs\vpsa_default.json  (0 KB)
+project_01_vpsa_zeolite13x\data\material\cavenati_isotherms_clean.csv  (2.7 KB)
+project_01_vpsa_zeolite13x\data\material\krishnamurthy_2014.json  (0 KB)
+project_01_vpsa_zeolite13x\data\material\ldf_data.csv  (2.9 KB)
+project_01_vpsa_zeolite13x\docs\doe_targets.md  (0 KB)
+project_01_vpsa_zeolite13x\docs\theory.md  (0 KB)
+project_01_vpsa_zeolite13x\outputs\figures\ldf_fit_validation.png  (255.3 KB)
+project_01_vpsa_zeolite13x\README.md  (0 KB)
+project_01_vpsa_zeolite13x\requirements.txt  (0 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Fluid_Transport_Properties_Dashboard 1 of 5.png  (420.2 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Fluid_Transport_Properties_Dashboard 2 of 5.png  (83.6 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Fluid_Transport_Properties_Dashboard 3 of 5.png  (163.8 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Fluid_Transport_Properties_Dashboard 4 of 5.png  (129 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Fluid_Transport_Properties_Dashboard 5 of 5.png  (143.8 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Hydrodynamic UA Dashboard.png  (2167.4 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Mass Transfer Dashboard.png  (1014.1 KB)
+project_01_vpsa_zeolite13x\vpsa_commercial_suite\figures\Thermodynamics Dashboard.png  (1036.1 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\.github\workflows\ci.yml  (0.4 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\auxiliary units & network\compressor_map.json  (0.4 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\benchmarks\breakthrough_validation.ipynb  (0.3 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\benchmarks\cycle_performance_metrics.ipynb  (0.3 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\docs\validation_report.pdf  (0 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\README.md  (0.6 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\requirements.txt  (0.1 KB)
+project_01_vpsa_zeolite13x\vpsa_simulation_suite\thermodynamics\dashboard_output.png  (1031.6 KB)
+README.md  (1.5 KB)
+repo_report.md  (22.3 KB)
+repo_structure.txt  (3.9 KB)
+
+=== TOP-LEVEL PYTHON FILES (imports + docstring, first 40 lines each) ===
+
+=== SRC/ MODULE FILES (first 25 lines each) ===
+
+=== REQUIREMENTS.TXT ===
+
+=== CONFIG.PY (full) ===
+
+=== README.md (first 80 lines) ===
+# CCUS-Portfolio
+A computational research portfolio focused on CCUS optimization using Physics-Informed Machine Learning,Surrogate Modeling, and Bayesian Optimization.
+
+## ðŸŽ¯ Research Vision
+This repository serves as a centralized hub for my computational research efforts in **Carbon Capture, Utilization, and Storage (CCUS)**. My work aims to bridge the gap between classical chemical engineering principles and advanced data-driven methodologies to accelerate the transition to sustainable energy systems.
+
+## ðŸ› ï¸ Core Methodologies
+The projects within this portfolio leverage a synergistic approach of:
+* **Physics-Informed Machine Learning (PIML):** Integrating thermodynamic and transport phenomena constraints into neural network architectures.
+* **Surrogate Modeling:** Developing high-fidelity, low-cost computational models to replace expensive mechanistic simulations.
+* **Bayesian Optimization:** Navigating complex, high-dimensional design spaces for optimal process configuration.
+
+## ðŸ“‚ Repository Structure
+The repository is organized by specific research tasks:
+- `projects/`: Contains individual research projects, each with its own codebase, data, and documentation.
+- `core_library/`: (Optional) Shared modular code used across different CCUS optimization tasks.
+
+## ðŸš€ Key Research Themes
+- [Project Name 1]: Optimization of [Process Type, e.g., Amine Scrubbing] using [Method].
+- [Project Name 2]: Data-driven design of [Process Type].
+
