@@ -1,4 +1,4 @@
-﻿"""
+"""
 Thermodynamic Equilibrium Engine for VPSA Adsorption
 CO2/N2 Separation on Zeolite 13X - Full Krishnamurthy et al. Architecture
 
@@ -11,7 +11,7 @@ Layer Architecture:
 6. Comprehensive Unit Testing Framework (Regression + Extended Physics)
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from abc import ABC, abstractmethod
 import unittest
@@ -169,6 +169,7 @@ class TothIsotherm(BaseIsotherm):
         integrand = lambda p: self.loading(p) / p
         psi_rem, _ = integrate.quad(integrand, p_cutoff, P, epsrel=1e-8, epsabs=1e-10, limit=100)
         return float(psi_low + psi_rem)
+        
     def get_isosteric_heat(self, q: float) -> float:
         """Concentration-dependent isosteric heat of adsorption based on Cavenati et al. (2004)."""
         theta = float(np.clip(q / max(self.qm, 1e-9), 0.0, 1.0))
@@ -255,11 +256,10 @@ class BaseThermalIsotherm(ABC):
 
         dH = - R_GAS * (T ** 2) * dq_dT / (P * dq_dP_val)
         return max(0.0, float(dH))
+        
     def get_adsorbed_heat_capacity(self, P: float, T: float, species: str = "CO2") -> float:
         q = self.loading(P, T)
         return self.at_temperature(T).get_adsorbed_heat_capacity(T, q, species=species)
-
-    
 
 
 class TemperatureDependentToth(BaseThermalIsotherm):
@@ -287,7 +287,6 @@ class TemperatureDependentToth(BaseThermalIsotherm):
         t = self.t0 + self.alpha * (1.0 - theta)
         t_clipped = float(np.clip(t, 1e-4, 1.0))
         return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=abs(self.dH))
-
 
 
 class TemperatureDependentDSL(BaseThermalIsotherm):
@@ -386,26 +385,40 @@ class BinaryIAST:
         return float(q1), float(q2), float(x1), float(psi_eq)
 
     def thermodynamic_jacobian(self, P: float, y1: float, T: float,
-                               h_P: float = 1e-4, h_y: float = 1e-4, h_T: float = 1e-1) -> dict:
+                               h_P: float = None, h_y: float = 1e-4, h_T: float = 1e-1) -> dict:
         """
         Computes 6 coupled partial derivatives for non-isothermal VPSA numerical integration:
         dq_i / dP, dq_i / dy1, dq_i / dT for components 1 and 2.
+        Uses central differences and relative pressure step for stability.
         """
+        if h_P is None:
+            h_P = max(abs(P) * 1e-4, 1e-6)
+
         base_q1, base_q2, _, _ = self.solve(P, y1, T)
 
-        # Pressure sensitivity
-        q1_p, q2_p, _, _ = self.solve(P + h_P, y1, T)
-        dq1_dP = (q1_p - base_q1) / h_P
-        dq2_dP = (q2_p - base_q2) / h_P
+        # Pressure sensitivity (Central difference)
+        q1_plus, q2_plus, _, _ = self.solve(P + h_P, y1, T)
+        q1_minus, q2_minus, _, _ = self.solve(max(P - h_P, 1e-12), y1, T)
+        dq1_dP = (q1_plus - q1_minus) / (2.0 * h_P)
+        dq2_dP = (q2_plus - q2_minus) / (2.0 * h_P)
 
-        # Composition sensitivity
-        y1_mod = min(0.9999, y1 + h_y)
-        dy = y1_mod - y1
-        q1_y, q2_y, _, _ = self.solve(P, y1_mod, T)
-        dq1_dy = (q1_y - base_q1) / dy
-        dq2_dy = (q2_y - base_q2) / dy
+        # Composition sensitivity (Central difference with fallback)
+        y_plus = min(1.0, y1 + h_y)
+        y_minus = max(0.0, y1 - h_y)
+        
+        if y_plus - y_minus < 1e-10:
+            # Fallback for boundary conditions (y1 ~ 0 or y1 ~ 1)
+            y_mod = min(0.9999, y1 + h_y) if y1 < 0.5 else max(1e-4, y1 - h_y)
+            q1_y, q2_y, _, _ = self.solve(P, y_mod, T)
+            dq1_dy = (q1_y - base_q1) / (y_mod - y1)
+            dq2_dy = (q2_y - base_q2) / (y_mod - y1)
+        else:
+            q1_yp, q2_yp, _, _ = self.solve(P, y_plus, T)
+            q1_ym, q2_ym, _, _ = self.solve(P, y_minus, T)
+            dq1_dy = (q1_yp - q1_ym) / (y_plus - y_minus)
+            dq2_dy = (q2_yp - q2_ym) / (y_plus - y_minus)
 
-        # Temperature sensitivity
+        # Temperature sensitivity (Forward difference)
         q1_T, q2_T, _, _ = self.solve(P, y1, T + h_T)
         dq1_dT = (q1_T - base_q1) / h_T
         dq2_dT = (q2_T - base_q2) / h_T
@@ -527,4 +540,3 @@ if __name__ == "__main__":
         print("\n[LOCKED] Extended Thermodynamic Layer passed 100% of physical tests.")
     else:
         print("\n[FAILED] Verification errors detected.")
-
