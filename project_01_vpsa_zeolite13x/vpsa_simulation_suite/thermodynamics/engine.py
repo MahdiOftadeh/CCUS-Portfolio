@@ -11,6 +11,8 @@ Layer Architecture:
 6. Comprehensive Unit Testing Framework (Regression + Extended Physics)
 """
 
+__version__ = "0.1.0"
+
 from abc import ABC, abstractmethod
 import unittest
 import numpy as np
