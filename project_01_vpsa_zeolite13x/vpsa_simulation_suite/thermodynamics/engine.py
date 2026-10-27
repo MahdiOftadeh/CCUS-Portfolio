@@ -11,7 +11,7 @@ Layer Architecture:
 6. Comprehensive Unit Testing Framework (Regression + Extended Physics)
 """
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 
 from abc import ABC, abstractmethod
 import unittest
@@ -138,7 +138,6 @@ class TothIsotherm(BaseIsotherm):
         self.dH_inf = float(dH_inf)
         self.gamma = float(gamma)
 
-
     def loading(self, P: float) -> float:
         if P <= 0.0:
             return 0.0
@@ -183,13 +182,16 @@ class DualSiteLangmuirIsotherm(BaseIsotherm):
     q(P) = qm1 * b1 * P / (1 + b1 * P) + qm2 * b2 * P / (1 + b2 * P)
     """
 
-    def __init__(self, qm1: float, b1: float, qm2: float, b2: float):
+    def __init__(self, qm1: float, b1: float, qm2: float, b2: float,
+                 Q1: float = 32000.0, Q2: float = 25000.0):
         if min(qm1, b1, qm2, b2) <= 0.0:
             raise ValueError("All DSL parameters must be strictly positive.")
         self.qm1 = float(qm1)
         self.b1 = float(b1)
         self.qm2 = float(qm2)
         self.b2 = float(b2)
+        self.Q1 = float(Q1)  # Isosteric heat of site 1 (J/mol)
+        self.Q2 = float(Q2)  # Isosteric heat of site 2 (J/mol)
 
     def loading(self, P: float) -> float:
         if P <= 0.0:
@@ -212,6 +214,24 @@ class DualSiteLangmuirIsotherm(BaseIsotherm):
         if P <= 0.0:
             return 0.0
         return float(self.qm1 * np.log1p(self.b1 * P) + self.qm2 * np.log1p(self.b2 * P))
+        
+    def get_isosteric_heat(self, q: float) -> float:
+        """Concentration-weighted isosteric heat."""
+        if q <= 0.0:
+            return float(self.Q1)
+        
+        def f(P): 
+            return self.loading(P) - q
+            
+        try:
+            P = optimize.brentq(f, 1e-12, 1e7)
+        except ValueError:
+            return float(self.Q1)
+            
+        q1 = self.qm1 * self.b1 * P / (1.0 + self.b1 * P)
+        q2 = self.qm2 * self.b2 * P / (1.0 + self.b2 * P)
+        tot = max(q1 + q2, 1e-12)
+        return float((q1 * self.Q1 + q2 * self.Q2) / tot)
 
 
 # ==============================================================================
@@ -265,52 +285,56 @@ class BaseThermalIsotherm(ABC):
 class TemperatureDependentToth(BaseThermalIsotherm):
     """
     Krishnamurthy non-isothermal Toth Isotherm:
-    b(T) = b0 * exp[ (-dH / (R * T0)) * (T0/T - 1) ]
+    b(T) = b0 * exp[ (Q_st / (R * T0)) * (T0/T - 1) ]
     qm(T) = qm0 * exp[ chi * (1 - T/T0) ]
     t(T) = t0 + alpha * (1 - T0/T)
     """
 
-    def __init__(self, qm0: float, b0: float, t0: float, dH: float,
+    def __init__(self, qm0: float, b0: float, t0: float, Q_st: float,
                  T0: float = 298.15, chi: float = 0.0, alpha: float = 0.0):
+        if Q_st <= 0.0:
+            raise ValueError("Q_st must be positive (heat magnitude).")
         self.qm0 = float(qm0)
         self.b0 = float(b0)
         self.t0 = float(t0)
-        self.dH = float(dH)
+        self.Q_st = float(Q_st)
         self.T0 = float(T0)
         self.chi = float(chi)
         self.alpha = float(alpha)
 
     def at_temperature(self, T: float) -> TothIsotherm:
         theta = self.T0 / T
-        b = self.b0 * np.exp((-self.dH / (R_GAS * self.T0)) * (theta - 1.0))
+        b = self.b0 * np.exp((self.Q_st / (R_GAS * self.T0)) * (theta - 1.0))
         qm = self.qm0 * np.exp(self.chi * (1.0 - (T / self.T0)))
         t = self.t0 + self.alpha * (1.0 - theta)
         t_clipped = float(np.clip(t, 1e-4, 1.0))
-        return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=abs(self.dH))
+        return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=self.Q_st)
 
 
 class TemperatureDependentDSL(BaseThermalIsotherm):
     """
     Krishnamurthy non-isothermal Dual-Site Langmuir Isotherm:
-    b1(T) = b1_0 * exp[ (-dH1 / (R * T0)) * (T0/T - 1) ]
-    b2(T) = b2_0 * exp[ (-dH2 / (R * T0)) * (T0/T - 1) ]
+    b1(T) = b1_0 * exp[ (Q_st1 / (R * T0)) * (T0/T - 1) ]
+    b2(T) = b2_0 * exp[ (Q_st2 / (R * T0)) * (T0/T - 1) ]
     """
 
-    def __init__(self, qm1_0: float, b1_0: float, dH1: float,
-                 qm2_0: float, b2_0: float, dH2: float, T0: float = 298.15):
+    def __init__(self, qm1_0: float, b1_0: float, Q_st1: float,
+                 qm2_0: float, b2_0: float, Q_st2: float, T0: float = 298.15):
+        if min(Q_st1, Q_st2) <= 0.0:
+            raise ValueError("Q_st1 and Q_st2 must be positive.")
         self.qm1_0 = float(qm1_0)
         self.b1_0 = float(b1_0)
-        self.dH1 = float(dH1)
+        self.Q_st1 = float(Q_st1)
         self.qm2_0 = float(qm2_0)
         self.b2_0 = float(b2_0)
-        self.dH2 = float(dH2)
+        self.Q_st2 = float(Q_st2)
         self.T0 = float(T0)
 
     def at_temperature(self, T: float) -> DualSiteLangmuirIsotherm:
         theta = self.T0 / T
-        b1 = self.b1_0 * np.exp((-self.dH1 / (R_GAS * self.T0)) * (theta - 1.0))
-        b2 = self.b2_0 * np.exp((-self.dH2 / (R_GAS * self.T0)) * (theta - 1.0))
-        return DualSiteLangmuirIsotherm(qm1=self.qm1_0, b1=b1, qm2=self.qm2_0, b2=b2)
+        b1 = self.b1_0 * np.exp((self.Q_st1 / (R_GAS * self.T0)) * (theta - 1.0))
+        b2 = self.b2_0 * np.exp((self.Q_st2 / (R_GAS * self.T0)) * (theta - 1.0))
+        return DualSiteLangmuirIsotherm(qm1=self.qm1_0, b1=b1, qm2=self.qm2_0, b2=b2, Q1=self.Q_st1, Q2=self.Q_st2)
 
 
 # ==============================================================================
@@ -441,12 +465,12 @@ class TestThermodynamicEngine(unittest.TestCase):
         self.toth_pure = TothIsotherm(qm=4.5, b=1.2, t=0.6)
         self.dsl_pure = DualSiteLangmuirIsotherm(qm1=3.0, b1=1.5, qm2=1.5, b2=0.2)
 
-        # Krishnamurthy standard benchmark params
+        # Krishnamurthy standard benchmark params (Q_st is positive magnitude)
         self.co2_thermal = TemperatureDependentToth(
-            qm0=5.50, b0=2.85, t0=0.48, dH=-35500.0, T0=298.15
+            qm0=5.50, b0=2.85, t0=0.48, Q_st=35500.0, T0=298.15
         )
         self.n2_thermal = TemperatureDependentToth(
-            qm0=2.30, b0=0.12, t0=0.95, dH=-18000.0, T0=298.15
+            qm0=2.30, b0=0.12, t0=0.95, Q_st=18000.0, T0=298.15
         )
         self.iast_system = BinaryIAST(self.co2_thermal, self.n2_thermal)
 
@@ -492,13 +516,13 @@ class TestThermodynamicEngine(unittest.TestCase):
     def test_thermal_isosteric_heat(self):
         """Isosteric heat must match specified enthalpy within thermodynamic limits."""
         dH_co2 = self.co2_thermal.isosteric_heat(P=1.0, T=298.15)
-        # Specified dH = 35.5 kJ/mol
+        # Specified Q_st = 35.5 kJ/mol
         self.assertLess(_rel_diff(dH_co2, 35500.0), 0.08)
 
     def test_thermal_toth_clipped_exponent(self):
         """TemperatureDependentToth must enforce t in [1e-4, 1.0]."""
         extreme = TemperatureDependentToth(
-            qm0=5.50, b0=2.85, t0=0.98, dH=-35500.0, T0=298.15,
+            qm0=5.50, b0=2.85, t0=0.98, Q_st=35500.0, T0=298.15,
             chi=0.0, alpha=0.5,
         )
         T_hot = 373.15  # forces t_raw > 1.0
