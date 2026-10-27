@@ -41,17 +41,3 @@ cd project_01_vpsa_zeolite13x/vpsa_simulation_suite
 python -m pytest tests/ -v
 📄 License
 This project is licensed under the terms included in the LICENSE file in the root directory.
-
-text
-
----
-
-### قدم‌های نهایی برای ثبت تغییرات و گرفتن نمره کامل:
-
-**۱. ذخیره فایل:**
-متن بالا را در فایل `README.md` (در ریشه پروژه) جایگزین کرده و ذخیره کنید.
-
-**۲. کامیت کردن تغییرات:**
-```powershell
-git add README.md
-git commit -m 'docs(readme): overhaul portfolio README with accurate structure and explicit AI/LLM keywords' -m 'Update repository structure to reflect current directories (llm, project_01, vpsa_commercial_suite). Explicitly mention AI, LLM, and Machine Learning methodologies to accurately reflect the codebase and satisfy verified AI scoring criteria.'
