@@ -239,3 +239,28 @@ avoids the common failure mode of building a monolith that cannot be tested.
 - Live file at `<module>/<file>.py` = latest release.
 - Frozen snapshots at `<module>/archive/vX.Y.Z/`.
 - `archive/` is read-only; bug fixes go to the next release.
+
+---
+
+## Repository Layout
+
+| Path | Role | Versioned? |
+|---|---|---|
+| `project_01_vpsa_zeolite13x/vpsa_simulation_suite/` | Core VPSA simulation library | Yes |
+| `.../thermodynamics/` | Thermodynamic equilibrium engine (Toth/DSL, IAST, Jacobian) | Yes |
+| `.../vpsa_core_lite/` | Minimal demo API placeholder | No |
+| `vpsa_commercial_suite/` | Generated figures and reports only | No |
+| `project_01_vpsa_zeolite13x/scripts/`, `data/`, `tests/` | Project-level assets | No |
+
+### Versioned modules
+
+| Module | Tag format | Current |
+|---|---|---|
+| Thermodynamics engine | `vpsa-simulation-suite/thermodynamics/vX.Y.Z` | `v0.1.0` |
+
+### Release policy
+
+- Each release carries an annotated Git tag.
+- Live file at `<module>/<file>.py` = latest release.
+- Frozen snapshots at `<module>/archive/vX.Y.Z/`.
+- `archive/` is read-only; bug fixes go to the next release.
