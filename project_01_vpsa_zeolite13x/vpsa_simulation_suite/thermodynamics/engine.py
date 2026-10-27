@@ -1,4 +1,4 @@
-"""
+﻿"""
 Thermodynamic Equilibrium Engine for VPSA Adsorption
 CO2/N2 Separation on Zeolite 13X - Full Krishnamurthy et al. Architecture
 
@@ -11,7 +11,7 @@ Layer Architecture:
 6. Comprehensive Unit Testing Framework (Regression + Extended Physics)
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from abc import ABC, abstractmethod
 import unittest
@@ -285,8 +285,8 @@ class TemperatureDependentToth(BaseThermalIsotherm):
         b = self.b0 * np.exp((-self.dH / (R_GAS * self.T0)) * (theta - 1.0))
         qm = self.qm0 * np.exp(self.chi * (1.0 - (T / self.T0)))
         t = self.t0 + self.alpha * (1.0 - theta)
-        nnt = float(np.clip(t, 1e-4, 1.0))
-        return TothIsotherm(qm=qm, b=b, t=t, dH_zero=abs(self.dH))
+        t_clipped = float(np.clip(t, 1e-4, 1.0))
+        return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=abs(self.dH))
 
 
 
@@ -482,6 +482,17 @@ class TestThermodynamicEngine(unittest.TestCase):
         # Specified dH = 35.5 kJ/mol
         self.assertLess(_rel_diff(dH_co2, 35500.0), 0.08)
 
+    def test_thermal_toth_clipped_exponent(self):
+        """TemperatureDependentToth must enforce t in [1e-4, 1.0]."""
+        extreme = TemperatureDependentToth(
+            qm0=5.50, b0=2.85, t0=0.98, dH=-35500.0, T0=298.15,
+            chi=0.0, alpha=0.5,
+        )
+        T_hot = 373.15  # forces t_raw > 1.0
+        iso = extreme.at_temperature(T_hot)
+        self.assertLessEqual(iso.t, 1.0)
+        self.assertGreaterEqual(iso.t, 1e-4)
+
     def test_iast_selectivity_and_mass_conservation(self):
         """Binary IAST must exhibit CO2 selectivity and thermodynamic consistency."""
         q1, q2, x1, psi = self.iast_system.solve(P=1.0, y1=0.15, T=298.15)
@@ -516,3 +527,4 @@ if __name__ == "__main__":
         print("\n[LOCKED] Extended Thermodynamic Layer passed 100% of physical tests.")
     else:
         print("\n[FAILED] Verification errors detected.")
+
