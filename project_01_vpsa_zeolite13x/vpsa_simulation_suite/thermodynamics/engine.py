@@ -1,4 +1,4 @@
-"""
+﻿"""
 Thermodynamic Equilibrium Engine for VPSA Adsorption
 CO2/N2 Separation on Zeolite 13X - Full Krishnamurthy et al. Architecture
 
@@ -285,8 +285,8 @@ class TemperatureDependentToth(BaseThermalIsotherm):
         b = self.b0 * np.exp((-self.dH / (R_GAS * self.T0)) * (theta - 1.0))
         qm = self.qm0 * np.exp(self.chi * (1.0 - (T / self.T0)))
         t = self.t0 + self.alpha * (1.0 - theta)
-        nnt = float(np.clip(t, 1e-4, 1.0))
-        return TothIsotherm(qm=qm, b=b, t=t, dH_zero=abs(self.dH))
+        t_clipped = float(np.clip(t, 1e-4, 1.0))
+        return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=abs(self.dH))
 
 
 
@@ -516,3 +516,4 @@ if __name__ == "__main__":
         print("\n[LOCKED] Extended Thermodynamic Layer passed 100% of physical tests.")
     else:
         print("\n[FAILED] Verification errors detected.")
+
