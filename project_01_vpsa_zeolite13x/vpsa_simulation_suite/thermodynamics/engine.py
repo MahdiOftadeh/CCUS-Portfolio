@@ -1,4 +1,4 @@
-﻿"""
+"""
 Thermodynamic Equilibrium Engine for VPSA Adsorption
 CO2/N2 Separation on Zeolite 13X - Full Krishnamurthy et al. Architecture
 
