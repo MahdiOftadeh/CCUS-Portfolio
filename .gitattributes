@@ -1,0 +1,4 @@
+﻿# Tell GitHub Linguist to ignore generated HTML reports for language stats
+*.html linguist-generated=true
+*.html linguist-documentation=true
+thermo_test_results/** linguist-vendored
