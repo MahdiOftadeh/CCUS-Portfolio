@@ -502,18 +502,7 @@ class TestThermodynamicEngine(unittest.TestCase):
 # MAIN SCRIPT EXECUTION
 # ==============================================================================
 
-if __name__ == "__main__":
-    print("=" * 70)
-    print("RUNNING EXTENDED KRISHNAMURTHY THERMODYNAMIC ENGINE SUITE")
-    print("=" * 70)
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestThermodynamicEngine)
-    runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(suite)
 
-    if result.wasSuccessful():
-        print("\n[LOCKED] Extended Thermodynamic Layer passed 100% of physical tests.")
-    else:
-        print("\n[FAILED] Verification errors detected.")
 
 
 # ==============================================================================
