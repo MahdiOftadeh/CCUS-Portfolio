@@ -1,8 +1,4 @@
-@'
-from pathlib import Path
-import datetime
-
-readme_content = """<div align="center">
+<div align="center">
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif" width="90" alt="Spinning Earth">
 
@@ -88,7 +84,7 @@ The VPSA simulation suite is a modular, multi-physics platform. Every engine is 
 
 ## 📂 Repository Structure
 
-```text
+
 CCUS-Portfolio/
 │
 ├── .github/workflows/            # CI/CD pipelines (GitHub Actions)
@@ -153,7 +149,23 @@ Cavenati, S., Grande, C. A., & Rodrigues, A. E. (2004). Adsorption equilibrium o
 
 Krishnamurthy, S., et al. (2014). CO2 capture from dry flue gas by vacuum swing adsorption: A pilot plant study.
 
-<div align="center"> <i>Built with ❤️ for a greener planet and a decarbonized future.</i> </div> """
-Path("README.md").write_text(readme_content, encoding="utf-8")
-print("OK: README.md has been completely rewritten from scratch with perfect formatting, animations, grid layout, and full content.")
-'@ | python -
+---
+
+<div align="center">
+  <h3>🤝 Let's Connect & Collaborate</h3>
+  <p>Feel free to reach out for research collaborations, discussions on CCUS, or just to say hi!</p>
+
+  <a href="https://www.linkedin.com/in/mahdioftadeh">
+    <img src="https://img.shields.io/badge/LinkedIn-Mahdi_Oftadeh-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="mailto:mahdi.oftadeh.1449@gmail.com">
+    <img src="https://img.shields.io/badge/Email-Contact_Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email">
+  </a>
+  
+  <br><br>
+  <i>Built with ❤️ for a greener planet and a decarbonized future.</i>
+</div>
+
+<div align="center"> <i>Built with ❤️ for a greener planet and a decarbonized future.</i> </div> ```
+
