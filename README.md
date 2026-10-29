@@ -127,19 +127,25 @@ CCUS-Portfolio/
 1. Requirements
 Ensure you have Python 3.10+ installed.
 
-bash
+```bash
 pip install -r project_01_vpsa_zeolite13x/requirements.txt
 pip install numpy scipy matplotlib pillow
+```
 2. Run the Core Thermodynamic Validation (v0.4.0)
-Independently verify the 57 physics checks and regenerate the 14 figures:
 
+Independently verify the 57 physics checks and regenerate the 14 figures:
+```
 bash
 python project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/Thermodynamics_v0.4.0_test.py
+```
 3. Run the Full VPSA Simulation Tests
-bash
+```bash
+
 cd project_01_vpsa_zeolite13x/vpsa_simulation_suite
 python -m pytest tests/ -v
+```
 📜 License & Citation
+
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Copyright (c) 2026 Mahdi Oftadeh
