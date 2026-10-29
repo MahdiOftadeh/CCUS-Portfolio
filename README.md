@@ -1,43 +1,146 @@
-# CCUS-Portfolio
+@'
+from pathlib import Path
 
-A computational research portfolio focused on **Carbon Capture, Utilization, and Storage (CCUS)** optimization, leveraging Physics-Informed Machine Learning, Advanced AI/LLM integrations, Surrogate Modeling, and Bayesian Optimization.
+readme_content = """<div align="center">
+
+# 🌍 CCUS-Portfolio | Computational Research & VPSA Simulation
+
+**Bridging Classical Chemical Engineering with Physics-Informed ML, LLMs, and Advanced Optimization**
+
+[![Release](https://img.shields.io/badge/Release-v0.4.0-blue.svg?style=for-the-badge)](https://github.com/MahdiOftadeh/CCUS-Portfolio/releases)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Live Report](https://img.shields.io/badge/📊_Live_Validation_Report-GitHub_Pages-success.svg?style=for-the-badge)](https://MahdiOftadeh.github.io/CCUS-Portfolio/)
+
+*A computational research portfolio focused on Carbon Capture, Utilization, and Storage (CCUS) optimization.*
+
+[📖 Live Report](https://MahdiOftadeh.github.io/CCUS-Portfolio/) • [🚀 Latest Release](https://github.com/MahdiOftadeh/CCUS-Portfolio/releases) • [🏗️ Architecture](ARCHITECTURE.md)
+
+</div>
+
+---
 
 ## 🎯 Research Vision
-This repository serves as a centralized hub for my computational research efforts in CCUS. My work aims to bridge the gap between classical chemical engineering principles and advanced data-driven methodologies—including **Artificial Intelligence (AI)**, **Large Language Models (LLM)**, and **Deep Learning**—to accelerate the transition to sustainable energy systems.
 
-## 🛠️ Core Methodologies
-The projects within this portfolio leverage a synergistic approach of:
-* **Physics-Informed Machine Learning (PIML):** Integrating thermodynamic and transport phenomena constraints directly into neural network architectures.
-* **AI & LLM-Assisted Research:** Utilizing AI agents and LLM pipelines to automate literature review, data extraction, and research summarization.
-* **Surrogate Modeling:** Developing high-fidelity, low-cost computational models (using **Machine Learning**) to replace expensive mechanistic simulations.
-* **Bayesian Optimization:** Navigating complex, high-dimensional design spaces for optimal process configuration.
+This repository serves as a centralized hub for advanced computational research in CCUS. The goal is to bridge the gap between classical chemical engineering principles and cutting-edge data-driven methodologies—including **Artificial Intelligence (AI)**, **Large Language Models (LLM)**, **Physics-Informed Machine Learning (PIML)**, and **Bayesian Optimization**—to accelerate the transition to sustainable energy systems.
+
+---
+
+## 📊 Visual Showcase
+
+<div align="center">
+  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig11_dashboard.png" width="48%" alt="Thermodynamics Dashboard">
+  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig05_iast.png" width="48%" alt="IAST Selectivity">
+  <br>
+  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig01_pure_isotherms.png" width="48%" alt="Pure Isotherms">
+  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig03_3d_surfaces.png" width="48%" alt="Heatmaps q(P,T)">
+  <br>
+  <i>All figures are generated automatically by the v0.4.0 validation suite and hosted on the <b><a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">Live Report</a></b>.</i>
+</div>
+
+---
+
+## 🧠 Core Methodologies & AI Integration
+
+*   **AI & LLM-Assisted Research**: The `llm/` module utilizes Large Language Models and AI agents to automate literature review, data extraction, and research summarization.
+*   **Physics-Informed Machine Learning (PIML)**: Integrating thermodynamic and transport constraints directly into neural network architectures.
+*   **Surrogate Modeling**: Developing high-fidelity, low-cost computational models to replace expensive mechanistic simulations.
+*   **Bayesian Optimization**: Navigating complex, high-dimensional design spaces for optimal process configuration.
+
+---
+
+## 🧩 Comprehensive Engine Architecture
+
+The VPSA simulation suite is a modular, multi-physics platform. Every engine is rigorously validated against literature benchmarks and experimental datasets.
+
+| Engine Module | Description |
+| :--- | :--- |
+| **🌡️ Thermodynamics** | Analytic models (Toth, DSL, IAST) for mixture equilibrium and isosteric heat. |
+| **💨 Mass Transfer** | Linear Driving Force (LDF) kinetics and breakthrough curve modeling. |
+| **🌊 Fluid Transport** | Gas-phase transport properties, viscosity, and mass diffusivity. |
+| **💧 Hydrodynamics** | Pressure drop, Ergun equation, and flow distribution across the bed. |
+| **🔥 Thermal Wall** | Heat transfer coefficients, wall thermal mass, and energy balances. |
+| **🏗️ Equipment & Boundary Network** | Compressor maps, valves, and piping network integration. |
+| **🏛️ Column Modeling** | 1D/2D spatial discretization for adsorption columns. |
+| **🔄 Multi-Bed Cycle** | Complex Skarstrom and VPSA cycle scheduling (CSS, Pressurization, Blowdown). |
+| **📉 Aging & Degradation** | Long-term adsorbent degradation and cyclic capacity loss. |
+| **💰 Economics** | CAPEX/OPEX correlations, process KPIs, and cost-of-capture models. |
+| **⚖️ Multi-Objective Optimization** | Pareto front generation, surrogate modeling, and DOE. |
+| **🌐 Digital Twin** | Real-time data assimilation and dynamic process mirroring. |
+| **👑 Master Engine** | Unified orchestrator coupling all physics, economics, and optimization loops. |
+
+> **🚀 Latest Highlight (v0.4.0)**: The Thermodynamics engine was upgraded to a fully analytic framework. The `ExtendedDSL` model replaces the numerical IAST solver, yielding a **~7000x speedup** (~4.5 µs vs ~32 ms) while maintaining thermodynamic consistency.
+
+---
 
 ## 📂 Repository Structure
-The repository is organized into specific research domains and software packages:
 
 ```text
 CCUS-Portfolio/
-├── llm/                           # AI-powered tools (e.g., LLM paper summarizers)
-├── project_01_vpsa_zeolite13x/    # Core VPSA CO2/N2 Separation Project
-│   ├── data/                      # Material and cycle configuration data
-│   ├── scripts/                   # Execution and optimization scripts
-│   └── vpsa_simulation_suite/     # Core simulation library (thermodynamics, solvers)
-├── vpsa_commercial_suite/         # Generated dashboards, figures, and reports
-├── tools/                         # Utility scripts (e.g., repository scorer)
-└── .github/workflows/             # CI/CD pipelines
-🚀 Key Research Themes
-Project 01 (VPSA Zeolite 13X): Multi-bed Vacuum Pressure Swing Adsorption modeling. This includes a comprehensive thermodynamics engine (Toth/DSL isotherms, IAST solver, coupled Jacobians) and process optimization.
+│
+├── .github/workflows/            # CI/CD pipelines (GitHub Actions)
+├── docs/                         # GitHub Pages (Live Validation Report)
+├── llm/                          # AI & LLM tools (e.g., paper summarizers)
+│
+├── project_01_vpsa_zeolite13x/   # Core VPSA CO2/N2 Separation Project
+│   ├── data/                     # Material and cycle configuration data
+│   │   ├── cycle_configs/        # VPSA cycle JSON configurations
+│   │   └── material/             # Literature isotherms & LDF data (CSV/JSON)
+│   ├── docs/                     # Theory and DOE targets
+│   ├── outputs/                  # Generated datasets, figures, and tables
+│   ├── scripts/                  # Execution & optimization scripts
+│   │   ├── run_breakthrough.py
+│   │   ├── run_vpsa_cycle.py
+│   │   └── run_optimization.py
+│   ├── tests/                    # Integration tests (isotherms, mass balance)
+│   │
+│   ├── vpsa_commercial_suite/    # Commercial-grade dashboards and reports
+│   │   ├── figures/              # High-level UI dashboards
+│   │   └── reports/
+│   │
+│   └── vpsa_simulation_suite/    # Core Python Package
+│       ├── auxiliary/            # Compressor maps & units network
+│       ├── benchmarks/           # Jupyter notebooks for validation
+│       ├── economics/            # Techno-economic KPIs
+│       ├── mass_transfer/        # LDF kinetics
+│       ├── optimization/         # DOE, Pareto, Surrogates
+│       ├── solvers/              # CSS, Breakthrough, Cycle solvers
+│       ├── thermodynamics/       # 🌟 Thermodynamics Engine
+│       │   ├── archive/v0.1.0/   # Historical versions
+│       │   ├── v0.3.0/           # Legacy suite
+│       │   └── v0.4.0/           # Latest Analytic Engine & 57-check tests
+│       ├── transport/            # Hydrodynamics & kinetics
+│       └── visualization/        # Plotting utilities
+│
+└── README.md
+🚀 Quick Start
+1. Requirements
+Ensure you have Python 3.10+ installed.
 
-LLM Paper Summarizer: A module built to leverage Large Language Models for automated extraction and summarization of critical insights from dense CCUS research papers.
+bash
+pip install -r project_01_vpsa_zeolite13x/requirements.txt
+pip install numpy scipy matplotlib pillow
+2. Run the Core Thermodynamic Validation (v0.4.0)
+Independently verify the 57 physics checks and regenerate the 14 figures:
 
-Process KPI & Economics: Tools for evaluating the techno-economic viability of carbon capture processes.
-
-🚦 Getting Started
-Each project sub-directory contains its own README.md, requirements.txt, and execution scripts.
-To run the core VPSA simulation tests:
-
+bash
+python project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/Thermodynamics_v0.4.0_test.py
+3. Run the Full VPSA Simulation Tests
 bash
 cd project_01_vpsa_zeolite13x/vpsa_simulation_suite
 python -m pytest tests/ -v
-📄 License
-This project is licensed under the terms included in the LICENSE file in the root directory.
+📜 License & Citation
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+Copyright (c) 2024 Mahdi Oftadeh
+
+If you use this thermodynamic engine or the VPSA simulation suite in your research, please cite the underlying literature:
+
+Cavenati, S., Grande, C. A., & Rodrigues, A. E. (2004). Adsorption equilibrium of methane, carbon dioxide, and nitrogen on zeolite 13X at high pressures.
+
+Krishnamurthy, S., et al. (2014). CO2 capture from dry flue gas by vacuum swing adsorption: A pilot plant study.
+
+<div align="center"> <i>Built with ❤️ for a greener planet and a decarbonized future.</i> </div> """
+Path("README.md").write_text(readme_content, encoding="utf-8")
+print("OK: README.md has been completely rewritten with correct Markdown syntax.")
+'@ | python -
