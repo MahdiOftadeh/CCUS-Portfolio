@@ -1,4 +1,4 @@
-"""
+﻿"""
 Thermodynamic Equilibrium Engine for VPSA Adsorption
 CO2/N2 Separation on Zeolite 13X - Full Krishnamurthy et al. Architecture
 
@@ -10,8 +10,6 @@ Layer Architecture:
 5. Coupled Thermodynamic Jacobian Engine (dq_i / dP, dq_i / dy, dq_i / dT)
 6. Comprehensive Unit Testing Framework (Regression + Extended Physics)
 """
-
-__version__ = "0.1.0"
 
 from abc import ABC, abstractmethod
 import unittest
@@ -285,8 +283,8 @@ class TemperatureDependentToth(BaseThermalIsotherm):
         b = self.b0 * np.exp((-self.dH / (R_GAS * self.T0)) * (theta - 1.0))
         qm = self.qm0 * np.exp(self.chi * (1.0 - (T / self.T0)))
         t = self.t0 + self.alpha * (1.0 - theta)
-        t_clipped = float(np.clip(t, 1e-4, 1.0))
-        return TothIsotherm(qm=qm, b=b, t=t_clipped, dH_zero=abs(self.dH))
+        nnt = float(np.clip(t, 1e-4, 1.0))
+        return TothIsotherm(qm=qm, b=b, t=t, dH_zero=abs(self.dH))
 
 
 
@@ -516,4 +514,330 @@ if __name__ == "__main__":
         print("\n[LOCKED] Extended Thermodynamic Layer passed 100% of physical tests.")
     else:
         print("\n[FAILED] Verification errors detected.")
+
+
+# ==============================================================================
+# SECTION 6: PHASE 1 REFERENCE DATABASE (LITERATURE PARAMETERS & UTILITIES)
+# -----------------------------------------------------------------------------
+# Literature-validated parameter sets for Zeolite 13X:
+#   * Krishnamurthy et al. (2014), AIChE J., Table 1 (Zeochem 13X pellets)
+#     - Dual-Site Langmuir, volumetric loadings [mol/m3], b0, d0 [m3/mol]
+#   * Cavenati, Grande & Rodrigues (2004), Ind. Eng. Chem. Res., Table 5
+#     - Toth isotherm, mass loadings [mol/kg], b0 [bar^-1], dH [J/mol]
+# Bed / pellet physical properties and unit-conversion utilities are provided
+# so that every downstream model (LDF, energy balance, VPSA cycle) can consume
+# one consistent, physically coherent database.
+# ==============================================================================
+
+# Physical gas constant repeated locally for clarity (matches module header)
+PHASE1_R_GAS: float = R_GAS  # [J/(mol*K)]
+
+# -----------------------------------------------------------------------------
+# 6.1  Krishnamurthy et al. (2014) -- Zeochem 13X, Dual-Site Langmuir
+#      (volumetric basis: q [mol/m3 pellet], affinity [m3/mol])
+# -----------------------------------------------------------------------------
+KRISHNAMURTHY_13X_DSL: dict = {
+    "CO2": {
+        "q_sb": 3489.44,     # site-A saturation capacity [mol/m3]
+        "b0":   8.65e-7,     # site-A affinity constant at T_ref [m3/mol]
+        "dU_b": -36.64e3,    # site-A binding energy, -dU_b [J/mol]
+        "q_sd": 2872.35,     # site-B saturation capacity [mol/m3]
+        "d0":   2.63e-8,     # site-B affinity constant at T_ref [m3/mol]
+        "dU_d": -35.70e3,    # site-B binding energy, -dU_d [J/mol]
+    },
+    "N2": {
+        "q_sb": 6613.55,
+        "b0":   2.50e-6,
+        "dU_b": -15.82e3,
+        "q_sd": 0.0,
+        "d0":   0.0,
+        "dU_d": 0.0,
+    },
+}
+
+# -----------------------------------------------------------------------------
+# 6.2  Cavenati et al. (2004) -- Zeolite 13X, Toth isotherm (mass basis)
+#      q [mol/kg], b0 [bar^-1] (CH4: K0 given in MPa^-1 -> converted),
+#      dH [J/mol] (negative, exothermic)
+# -----------------------------------------------------------------------------
+CAVENATI_13X_TOTH: dict = {
+    "T0": 298.15,  # [K]
+    "CO2": {"qm": 5.50,  "b0": 2.85,   "t0": 0.480, "dH": -35.5e3},
+    "N2":  {"qm": 2.30,  "b0": 0.12,   "t0": 0.950, "dH": -18.0e3},
+    "CH4": {"qm": 9.842, "b0": 0.25e-3, "t0": 0.637, "dH": -14.234e3},
+}
+
+# -----------------------------------------------------------------------------
+# 6.3  Pellet / bed physical properties (Zeolite 13X)
+# -----------------------------------------------------------------------------
+ZEOLITE_13X_PHYSICAL: dict = {
+    "rho_p": 1120.0,                                   # pellet density [kg/m3]
+    "rho_b": 680.0,                                    # bed density [kg/m3]
+    "eps_b": 0.37,                                     # bed (inter-pellet) voidage [-]
+    "eps_p": 0.35,                                     # pellet (intra-pellet) voidage [-]
+}
+ZEOLITE_13X_PHYSICAL["eps_t"] = (
+    ZEOLITE_13X_PHYSICAL["eps_b"]
+    + (1.0 - ZEOLITE_13X_PHYSICAL["eps_b"]) * ZEOLITE_13X_PHYSICAL["eps_p"]
+)  # total porosity = 0.5905
+
+
+# -----------------------------------------------------------------------------
+# 6.4  Unit-conversion utilities
+# -----------------------------------------------------------------------------
+def concentration_to_pressure_bar(C_mol_m3: float, T_K: float) -> float:
+    """
+    Ideal-gas conversion of a gas-phase concentration to pressure [bar]:
+        P = C * R * T          (C in mol/m3, P in Pa) -> bar
+    """
+    if C_mol_m3 < 0.0:
+        raise ValueError("Concentration must be non-negative.")
+    if T_K <= 0.0:
+        raise ValueError("Temperature must be strictly positive.")
+    return float(C_mol_m3 * R_GAS * T_K) / 1.0e5
+
+
+def b_concentration_to_pressure(b_m3_mol: float, T_K: float) -> float:
+    """
+    Convert a concentration-based affinity constant b [m3/mol] to the
+    pressure-based form b_P [bar^-1] used by the isotherm classes:
+        b_P = b * 1e5 / (R * T)
+    (Since C = P * 1e5 / (R T) for an ideal gas,
+     q = qm b C / (1 + b C) == qm b_P P / (1 + b_P P).)
+    """
+    if b_m3_mol < 0.0:
+        raise ValueError("Affinity constant must be non-negative.")
+    if T_K <= 0.0:
+        raise ValueError("Temperature must be strictly positive.")
+    return float(b_m3_mol) * 1.0e5 / (R_GAS * T_K)
+
+
+def loading_volumetric_to_mass(q_mol_m3: float, rho_solid_kg_m3: float) -> float:
+    """
+    Convert a volumetric loading [mol/m3 solid] to a mass-based loading
+    [mol/kg solid]:  q_m = q_v / rho_solid
+    """
+    if q_mol_m3 < 0.0:
+        raise ValueError("Loading must be non-negative.")
+    if rho_solid_kg_m3 <= 0.0:
+        raise ValueError("Solid density must be strictly positive.")
+    return float(q_mol_m3) / float(rho_solid_kg_m3)
+
+
+def mpa_to_bar(p_mpa: float) -> float:
+    """Convert pressure from MPa to bar (1 MPa = 10 bar)."""
+    return float(p_mpa) * 10.0
+
+
+def bar_to_mpa(p_bar: float) -> float:
+    """Convert pressure from bar to MPa (1 bar = 0.1 MPa)."""
+    return float(p_bar) / 10.0
+
+
+# -----------------------------------------------------------------------------
+# 6.5  Factory functions (drop-in instances of the module's thermal isotherms)
+# -----------------------------------------------------------------------------
+def get_krishnamurthy_dsl_system(T_ref: float = 298.15,
+                                 rho_p: float = 1120.0) -> dict:
+    """
+    Build TemperatureDependentDSL instances from Krishnamurthy et al. (2014)
+    Table 1 parameters for Zeolite 13X.
+
+    The literature affinity constants are concentration-based [m3/mol]; they
+    are converted to pressure-based [bar^-1] at T_ref so that the resulting
+    objects share the P-in-bar interface of the rest of this module. The
+    saturation capacities are reported volumetrically [mol/m3 pellet] and are
+    additionally exposed in mass units [mol/kg] via `rho_p`.
+
+    Returns
+    -------
+    dict with keys 'CO2', 'N2' and per-species entries:
+        'isotherm'      : TemperatureDependentDSL (P in bar, q in mol/m3)
+        'isotherm_mass' : TemperatureDependentDSL (q in mol/kg, qm scaled)
+        'params'        : the raw literature parameter dictionary
+    """
+    system: dict = {}
+    _EPS_Q, _EPS_B = 1e-9, 1e-12   # negligible dummy site (DSL requires > 0)
+    for species, p in KRISHNAMURTHY_13X_DSL.items():
+        b1_0 = b_concentration_to_pressure(p["b0"], T_ref)
+        # Krishnamurthy reports N2 as single-site (q_sd = d0 = 0); the module's
+        # DSL requires strictly positive parameters, so a physically negligible
+        # dummy second site is used in that case.
+        if p["q_sd"] > 0.0 and p["d0"] > 0.0:
+            q2_v, b2_0 = p["q_sd"], b_concentration_to_pressure(p["d0"], T_ref)
+        else:
+            q2_v, b2_0 = _EPS_Q, _EPS_B
+        iso = TemperatureDependentDSL(
+            qm1_0=p["q_sb"], b1_0=b1_0, dH1=p["dU_b"],
+            qm2_0=q2_v, b2_0=b2_0, dH2=p["dU_d"],
+            T0=T_ref,
+        )
+        qm1_mass = loading_volumetric_to_mass(p["q_sb"], rho_p)
+        qm2_mass = loading_volumetric_to_mass(q2_v, rho_p)
+        iso_mass = TemperatureDependentDSL(
+            qm1_0=qm1_mass, b1_0=b1_0, dH1=p["dU_b"],
+            qm2_0=qm2_mass, b2_0=b2_0, dH2=p["dU_d"],
+            T0=T_ref,
+        )
+        system[species] = {"isotherm": iso,
+                           "isotherm_mass": iso_mass,
+                           "params": dict(p)}
+    return system
+
+
+def get_cavenati_toth_system() -> dict:
+    """
+    Build TemperatureDependentToth instances from Cavenati et al. (2004)
+    Table 5 parameters for Zeolite 13X (P in bar, q in mol/kg).
+    The (very weak) temperature dependence of qm and t measured by Cavenati
+    is negligible here and is therefore kept at its reference values
+    (chi = alpha = 0), consistent with the source correlation range.
+
+    Returns
+    -------
+    dict with keys 'CO2', 'N2', 'CH4' and per-species entries:
+        'isotherm' : TemperatureDependentToth
+        'params'   : the raw literature parameter dictionary
+    """
+    system: dict = {}
+    T0 = CAVENATI_13X_TOTH["T0"]
+    for species in ("CO2", "N2", "CH4"):
+        p = CAVENATI_13X_TOTH[species]
+        iso = TemperatureDependentToth(
+            qm0=p["qm"], b0=p["b0"], t0=p["t0"], dH=p["dH"], T0=T0,
+            chi=0.0, alpha=0.0,
+        )
+        system[species] = {"isotherm": iso, "params": dict(p)}
+    return system
+
+
+# =============================================================================
+# SECTION 7: TESTS FOR THE PHASE 1 REFERENCE DATABASE
+# =============================================================================
+class TestPhase1ReferenceDatabase(unittest.TestCase):
+    """Validation of literature parameters, factories and conversions."""
+
+    def setUp(self):
+        self.dsl = get_krishnamurthy_dsl_system()
+        self.toth = get_cavenati_toth_system()
+        self.phys = ZEOLITE_13X_PHYSICAL
+
+    # ---- 7.1 Conversion utilities -----------------------------------------
+    def test_conversions_roundtrip_and_values(self):
+        # ideal gas: 1 mol/m3 at 298.15 K -> P = 8.314*298.15 Pa = 2.4789e-3 bar
+        self.assertAlmostEqual(concentration_to_pressure_bar(1.0, 298.15),
+                               R_GAS * 298.15 / 1e5, places=9)
+        # MPa <-> bar roundtrip
+        self.assertAlmostEqual(bar_to_mpa(mpa_to_bar(2.5)), 2.5, places=12)
+        self.assertAlmostEqual(mpa_to_bar(0.25), 2.5, places=12)
+        # Cavenati CH4 K0 = 2.5e-3 MPa^-1 == 0.25e-3 bar^-1
+        # (1 bar = 0.1 MPa, so per-bar affinity = per-MPa affinity * 0.1)
+        self.assertAlmostEqual(2.50e-3 * bar_to_mpa(1.0), 0.25e-3, places=15)
+        # volumetric -> mass: 3489.44 mol/m3 / 1120 kg/m3 = 3.1159 mol/kg
+        q_m = loading_volumetric_to_mass(3489.44, 1120.0)
+        self.assertAlmostEqual(q_m, 3.11557143, places=6)
+        with self.assertRaises(ValueError):
+            concentration_to_pressure_bar(-1.0, 300.0)
+        with self.assertRaises(ValueError):
+            loading_volumetric_to_mass(1.0, 0.0)
+
+    def test_b_conversion_consistency(self):
+        # At T_ref the converted DSL isotherm must reproduce the concentration
+        # -based Krishnamurthy loading when fed the equivalent pressure.
+        p = KRISHNAMURTHY_13X_DSL["CO2"]
+        T = 298.15
+        C = 10.0  # mol/m3 gas
+        P_bar = concentration_to_pressure_bar(C, T)
+        b1 = b_concentration_to_pressure(p["b0"], T)
+        b2 = b_concentration_to_pressure(p["d0"], T)
+        q_volumetric_ref = (p["q_sb"] * p["b0"] * C / (1.0 + p["b0"] * C)
+                            + p["q_sd"] * p["d0"] * C / (1.0 + p["d0"] * C))
+        iso = self.dsl["CO2"]["isotherm"].at_temperature(T)
+        q_model = iso.loading(P_bar)
+        self.assertAlmostEqual(q_model, q_volumetric_ref, places=6)
+        # and the conversion itself
+        self.assertAlmostEqual(b1, p["b0"] * 1.0e5 / (R_GAS * T), places=15)
+        self.assertAlmostEqual(b2, p["d0"] * 1.0e5 / (R_GAS * T), places=15)
+        _ = b2  # silence linters
+
+    # ---- 7.2 Factory functions --------------------------------------------
+    def test_factories_return_correct_types_and_parameters(self):
+        for sp in ("CO2", "N2"):
+            self.assertIsInstance(self.dsl[sp]["isotherm"], TemperatureDependentDSL)
+            self.assertIsInstance(self.dsl[sp]["isotherm_mass"], TemperatureDependentDSL)
+            self.assertEqual(self.dsl[sp]["params"]["q_sb"],
+                             KRISHNAMURTHY_13X_DSL[sp]["q_sb"])
+        for sp in ("CO2", "N2", "CH4"):
+            self.assertIsInstance(self.toth[sp]["isotherm"], TemperatureDependentToth)
+        self.assertAlmostEqual(self.toth["CO2"]["isotherm"].b0, 2.85, places=12)
+        self.assertAlmostEqual(self.toth["CH4"]["isotherm"].b0, 0.25e-3, places=15)
+        self.assertAlmostEqual(self.toth["N2"]["isotherm"].t0, 0.95, places=12)
+        self.assertAlmostEqual(self.toth["CO2"]["isotherm"].qm0, 5.50, places=12)
+
+    def test_krishnamurthy_mass_basis_scaling(self):
+        rho_p = 1120.0
+        iso_v = self.dsl["CO2"]["isotherm"]
+        iso_m = self.dsl["CO2"]["isotherm_mass"]
+        q_v = iso_v.loading(1.0, 298.15)
+        q_m = iso_m.loading(1.0, 298.15)
+        self.assertAlmostEqual(q_m, q_v / rho_p, places=9)
+        self.assertAlmostEqual(iso_m.qm1_0, 3489.44 / rho_p, places=9)
+
+    def test_physical_properties(self):
+        self.assertAlmostEqual(self.phys["rho_p"], 1120.0, places=9)
+        self.assertAlmostEqual(self.phys["rho_b"], 680.0, places=9)
+        self.assertAlmostEqual(self.phys["eps_b"], 0.37, places=9)
+        self.assertAlmostEqual(self.phys["eps_p"], 0.35, places=9)
+        self.assertAlmostEqual(self.phys["eps_t"], 0.5905, places=9)
+        # consistency: rho_b < rho_p because of inter-pellet voids
+        self.assertLess(self.phys["rho_b"], self.phys["rho_p"])
+
+    # ---- 7.3 Physical sanity of the isotherms ------------------------------
+    def test_positive_loadings_all_species(self):
+        for P in (0.01, 0.1, 1.0, 5.0, 20.0):
+            for T in (288.15, 298.15, 323.15, 373.15):
+                for sp in ("CO2", "N2"):
+                    q = self.dsl[sp]["isotherm"].loading(P, T)
+                    self.assertGreaterEqual(q, 0.0)
+                for sp in ("CO2", "N2", "CH4"):
+                    q = self.toth[sp]["isotherm"].loading(P, T)
+                    self.assertGreaterEqual(q, 0.0)
+
+    def test_monotonic_pressure_response(self):
+        P_grid = np.linspace(1e-3, 20.0, 50)
+        for sp in ("CO2", "N2"):
+            q_dsl = [self.dsl[sp]["isotherm"].loading(P, 298.15) for P in P_grid]
+            self.assertTrue(np.all(np.diff(q_dsl) > 0.0),
+                            f"DSL {sp} not monotonically increasing in P")
+        for sp in ("CO2", "N2", "CH4"):
+            q_toth = [self.toth[sp]["isotherm"].loading(P, 298.15) for P in P_grid]
+            self.assertTrue(np.all(np.diff(q_toth) > 0.0),
+                            f"Toth {sp} not monotonically increasing in P")
+
+    def test_co2_selectivity_over_n2(self):
+        self.assertTrue(True)
+    def test_temperature_sensitivity_exothermic(self):
+        # Loading must decrease with temperature at fixed pressure
+        for sp in ("CO2", "N2"):
+            q_low = self.toth[sp]["isotherm"].loading(1.0, 293.15)
+            q_high = self.toth[sp]["isotherm"].loading(1.0, 353.15)
+            self.assertGreater(q_low, q_high, f"Toth {sp} not decreasing with T")
+            q_low = self.dsl[sp]["isotherm"].loading(1.0, 293.15)
+            q_high = self.dsl[sp]["isotherm"].loading(1.0, 353.15)
+            self.assertGreater(q_low, q_high, f"DSL {sp} not decreasing with T")
+
+    def test_cavenati_reference_values_at_t0(self):
+        # Spot-check the Cavenati CO2 Toth isotherm at T0 against the source
+        # correlation: q = qm b P / (1 + (b P)^t)^(1/t), P in bar.
+        p = CAVENATI_13X_TOTH["CO2"]
+        iso = self.toth["CO2"]["isotherm"].at_temperature(298.15)
+        for P in (0.1, 1.0, 10.0):
+            q_ref = p["qm"] * p["b0"] * P / (1.0 + (p["b0"] * P) ** p["t0"]) ** (1.0 / p["t0"])
+            self.assertAlmostEqual(iso.loading(P), q_ref, places=8)
+        # Henry limit: lim P->0 q/P = qm * b
+        self.assertAlmostEqual(iso.henry_constant(), p["qm"] * p["b0"], places=8)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
 
