@@ -4,7 +4,7 @@
 
 # CCUS-Portfolio | Computational Research & VPSA Simulation
 
-**Bridging Classical Chemical Engineering with Physics-Informed ML, LLMs, and Advanced Optimization**
+**Bridging Classical Chemical Engineering with Physics-Informed ML , LLM , AI , and Advanced Optimization**
 
 [![Release](https://img.shields.io/badge/Release-v0.4.0-blue.svg?style=for-the-badge)](https://github.com/MahdiOftadeh/CCUS-Portfolio/releases)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
