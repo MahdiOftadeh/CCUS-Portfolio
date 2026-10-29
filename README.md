@@ -1,9 +1,12 @@
 @'
 from pathlib import Path
+import datetime
 
 readme_content = """<div align="center">
 
-# 🌍 CCUS-Portfolio | Computational Research & VPSA Simulation
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif" width="90" alt="Spinning Earth">
+
+# CCUS-Portfolio | Computational Research & VPSA Simulation
 
 **Bridging Classical Chemical Engineering with Physics-Informed ML, LLMs, and Advanced Optimization**
 
@@ -20,6 +23,15 @@ readme_content = """<div align="center">
 
 ---
 
+## 🔄 Dynamic Process Visualization
+
+<div align="center">
+  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig14_vpsa_animation.gif" width="65%" style="border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" alt="VPSA Cycle Animation">
+  <p><i>Live simulation of the VPSA cycle trajectory (CO2 vs N2 loadings) moving through adsorption, blowdown, and purge steps.</i></p>
+</div>
+
+---
+
 ## 🎯 Research Vision
 
 This repository serves as a centralized hub for advanced computational research in CCUS. The goal is to bridge the gap between classical chemical engineering principles and cutting-edge data-driven methodologies—including **Artificial Intelligence (AI)**, **Large Language Models (LLM)**, **Physics-Informed Machine Learning (PIML)**, and **Bayesian Optimization**—to accelerate the transition to sustainable energy systems.
@@ -28,15 +40,16 @@ This repository serves as a centralized hub for advanced computational research 
 
 ## 📊 Visual Showcase
 
-<div align="center">
-  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig11_dashboard.png" width="48%" alt="Thermodynamics Dashboard">
-  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig05_iast.png" width="48%" alt="IAST Selectivity">
-  <br>
-  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig01_pure_isotherms.png" width="48%" alt="Pure Isotherms">
-  <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig03_3d_surfaces.png" width="48%" alt="Heatmaps q(P,T)">
-  <br>
-  <i>All figures are generated automatically by the v0.4.0 validation suite and hosted on the <b><a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">Live Report</a></b>.</i>
+<div align="center" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; justify-items: center; max-width: 100%;">
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig11_dashboard.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Thermodynamics Dashboard"></a>
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig05_iast.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="IAST Selectivity"></a>
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig01_pure_isotherms.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Pure Isotherms"></a>
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig03_3d_surfaces.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Heatmaps q(P,T)"></a>
 </div>
+
+<p align="center">
+  <i>All figures are generated automatically by the v0.4.0 validation suite and hosted on the <b><a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">Live Report</a></b>.</i>
+</p>
 
 ---
 
@@ -132,7 +145,7 @@ python -m pytest tests/ -v
 📜 License & Citation
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-Copyright (c) 2024 Mahdi Oftadeh
+Copyright (c) 2026 Mahdi Oftadeh
 
 If you use this thermodynamic engine or the VPSA simulation suite in your research, please cite the underlying literature:
 
@@ -142,5 +155,5 @@ Krishnamurthy, S., et al. (2014). CO2 capture from dry flue gas by vacuum swing 
 
 <div align="center"> <i>Built with ❤️ for a greener planet and a decarbonized future.</i> </div> """
 Path("README.md").write_text(readme_content, encoding="utf-8")
-print("OK: README.md has been completely rewritten with correct Markdown syntax.")
+print("OK: README.md has been completely rewritten from scratch with perfect formatting, animations, grid layout, and full content.")
 '@ | python -
