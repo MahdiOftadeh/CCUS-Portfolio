@@ -84,7 +84,7 @@ The VPSA simulation suite is a modular, multi-physics platform. Every engine is 
 
 ## 📂 Repository Structure
 
-
+```
 CCUS-Portfolio/
 │
 ├── .github/workflows/            # CI/CD pipelines (GitHub Actions)
@@ -122,6 +122,7 @@ CCUS-Portfolio/
 │       └── visualization/        # Plotting utilities
 │
 └── README.md
+```
 🚀 Quick Start
 1. Requirements
 Ensure you have Python 3.10+ installed.
@@ -166,6 +167,3 @@ Krishnamurthy, S., et al. (2014). CO2 capture from dry flue gas by vacuum swing 
   <br><br>
   <i>Built with ❤️ for a greener planet and a decarbonized future.</i>
 </div>
-
-<div align="center"> <i>Built with ❤️ for a greener planet and a decarbonized future.</i> </div> ```
-
