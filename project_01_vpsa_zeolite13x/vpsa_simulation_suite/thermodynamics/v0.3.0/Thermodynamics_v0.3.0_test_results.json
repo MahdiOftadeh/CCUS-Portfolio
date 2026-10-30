@@ -1,0 +1,421 @@
+{
+  "module": "Thermodynamics_v0.3.0.py",
+  "timestamp": "2026-10-30T20:44:43.373599",
+  "runtime_seconds": 82.44106483459473,
+  "summary": {
+    "n_unit": 17,
+    "n_unit_passed": 17,
+    "n_physics": 50,
+    "n_physics_passed": 50,
+    "n_figures": 10,
+    "n_figures_failed": 0
+  },
+  "unit_tests": [
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_b_conversion_consistency",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_cavenati_reference_values_at_t0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_co2_selectivity_over_n2",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_conversions_roundtrip_and_values",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_factories_return_correct_types_and_parameters",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_krishnamurthy_mass_basis_scaling",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_monotonic_pressure_response",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_physical_properties",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_positive_loadings_all_species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabase",
+      "test": "test_temperature_sensitivity_exothermic",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_henry_limits",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_iast_selectivity_and_mass_conservation",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_inversion_roundtrip",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_pure_boundary_conditions",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_pure_derivative_accuracy",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_thermal_isosteric_heat",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_thermodynamic_jacobian_physics",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "physics_validations": [
+    {
+      "name": "V01 \u00b7 Toth loadings non-negative (all sp \u00d7 T \u00d7 P)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V02 \u00b7 DSL loadings non-negative (all sp \u00d7 T \u00d7 P)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V03 \u00b7 Toth loading strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V04 \u00b7 DSL loading strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V05 \u00b7 Toth loadings decrease with T (exothermic)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V06 \u00b7 DSL loadings decrease with T (exothermic)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V07 \u00b7 Henry limit q/P \u2192 K_H (Toth)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V08 \u00b7 Henry limit q/P \u2192 K_H (DSL)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V09 \u00b7 Spreading pressure strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V10 \u00b7 \u03c8-inversion roundtrip exact to 1e-4",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V11 \u00b7 at_temperature returns usable isotherm objects",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V12 \u00b7 TemperatureDependentToth monotone in T",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V13 \u00b7 TemperatureDependentDSL monotone in T",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V14 \u00b7 qm(T) decays with T when chi > 0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V15 \u00b7 t(T) with alpha stays finite & positive",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V16 \u00b7 isosteric_heat (CC method) finite & positive",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V17 \u00b7 get_isosteric_heat (Cavenati) finite & positive",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V18 \u00b7 Adsorbed heat capacity in physical band",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V19 \u00b7 Toth dq/dP analytic = Richardson numerical",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V20 \u00b7 DSL dq/dP analytic = Richardson numerical",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V21 \u00b7 dq/dP strictly positive everywhere (Toth)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V22 \u00b7 dq/dP at P=0 exactly equals K_H",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V23 \u00b7 dq/dP decreasing with P (saturation)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V24 \u00b7 dq/dP decreases with T in Henry-moderate P regime",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V25 \u00b7 CO\u2082 > N\u2082 loading (Cavenati Toth IAST)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V26 \u00b7 IAST mass balance q_i = q_tot \u00b7 x_i",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V27 \u00b7 CO\u2082 enriched in adsorbed phase (x\u2081 > y\u2081)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V28 \u00b7 IAST finite at extreme compositions",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V29 \u00b7 IAST finite at extreme pressures (VPSA band)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V30 \u00b7 IAST (y\u2081\u21920) recovers pure N\u2082",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V31 \u00b7 IAST (y\u2081\u21921) recovers pure CO\u2082",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V32 \u00b7 Jacobian dq_i/dP > 0 for both species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V33 \u00b7 Jacobian dq_i/dT < 0 for both species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V34 \u00b7 CO\u2082 dominates Jacobian magnitudes",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V35 \u00b7 All six Jacobian entries finite",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V36 \u00b7 Krishnamurthy factory returns DSL + mass",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V37 \u00b7 Cavenati factory returns Toth for 3 species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V38 \u00b7 Mass scaling q_mass = q_vol / \u03c1 exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V39 \u00b7 Zeolite 13X physical properties consistent",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V40 \u00b7 Ideal-gas C \u2192 P conversion exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V41 \u00b7 b-concentration \u2192 b-pressure identity exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V42 \u00b7 MPa \u2194 bar roundtrip exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V43 \u00b7 q_vol \u2192 q_mass identity exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V44 \u00b7 Conversion utilities reject negatives",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V45 \u00b7 All factory objects usable at T0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V46 \u00b7 Cross-model: Cavenati Toth keeps CO\u2082 > N\u2082",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V47 \u00b7 VPSA working capacity positive",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V48 \u00b7 q_st(CO\u2082) > q_st(N\u2082) (stronger adsorption)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V49 \u00b7 q_st(CO\u2082) in physically reasonable band",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V50 \u00b7 q_st(P) smooth \u2014 no discontinuities",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "figures": [
+    {
+      "name": "01_pure_isotherms.png",
+      "title": "Fig 1 \u00b7 Pure Isotherms",
+      "failed": false
+    },
+    {
+      "name": "02_derivative_validation.png",
+      "title": "Fig 2 \u00b7 Derivative Validation",
+      "failed": false
+    },
+    {
+      "name": "03_spreading_pressure.png",
+      "title": "Fig 3 \u00b7 \u03c8 & Inversion",
+      "failed": false
+    },
+    {
+      "name": "04_isosteric_heat_loading.png",
+      "title": "Fig 4 \u00b7 q_st(q)",
+      "failed": false
+    },
+    {
+      "name": "05_isosteric_heat_cc.png",
+      "title": "Fig 5 \u00b7 q_st via CC",
+      "failed": false
+    },
+    {
+      "name": "06_iast_pressure_sweep.png",
+      "title": "Fig 6 \u00b7 IAST Pressure",
+      "failed": false
+    },
+    {
+      "name": "07_iast_composition_sweep.png",
+      "title": "Fig 7 \u00b7 IAST Composition",
+      "failed": false
+    },
+    {
+      "name": "08_jacobian_heatmap.png",
+      "title": "Fig 8 \u00b7 Jacobian Heatmap",
+      "failed": false
+    },
+    {
+      "name": "09_vpsa_window.png",
+      "title": "Fig 9 \u00b7 VPSA Window",
+      "failed": false
+    },
+    {
+      "name": "10_dashboard.png",
+      "title": "Fig 10 \u00b7 Dashboard",
+      "failed": false
+    }
+  ]
+}
