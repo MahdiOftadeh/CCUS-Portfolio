@@ -1104,7 +1104,7 @@ print("  GENERATING HTML REPORT")
 print("-" * 78)
 
 HTML_HEAD = """<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>Thermodynamics v4 - Report</title>
+<title>Thermodynamics v0.4.0 - Validation Report</title>
 <style>
  body{font-family:Segoe UI,Arial,sans-serif;background:#f4f6f8;margin:0;padding:20px;color:#222}
  h1{color:#1a3a5c;border-bottom:3px solid #1a3a5c;padding-bottom:10px}
