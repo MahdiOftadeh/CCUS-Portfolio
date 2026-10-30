@@ -1,0 +1,655 @@
+{
+  "module": "Thermodynamics_v0.5.0.py",
+  "timestamp": "2026-10-30T17:13:05.166121",
+  "runtime_seconds": 212.47717213630676,
+  "summary": {
+    "n_unit": 31,
+    "n_unit_passed": 31,
+    "n_physics": 70,
+    "n_physics_passed": 70,
+    "n_figures": 20,
+    "n_figures_failed": 0
+  },
+  "unit_tests": [
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_b_conversion_consistency",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_cavenati_reference_values_at_t0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_co2_selectivity_over_n2",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_conversions_roundtrip_and_values",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_factories_return_correct_types_and_parameters",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_krishnamurthy_mass_basis_scaling",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_monotonic_pressure_response",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_physical_properties",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_positive_loadings_all_species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase1ReferenceDatabaseCorrected",
+      "test": "test_temperature_sensitivity_exothermic",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_analytic_dq_dP_dsl",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_analytic_dq_dP_toth",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_analytic_dq_dT_dsl",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_analytic_dq_dT_toth",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_extended_dsl_jacobian_vs_central_difference",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_extended_dsl_jacobian_vs_finite_difference",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_extended_dsl_reduces_to_pure_isotherms",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_iast_analytic_jacobian_consistency",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_phase1_polish_b_conversion_formula",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_phase1_polish_krishnamurthy_mass_loading_exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_phase1_polish_selectivity_cavenati_toth",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_qst_dsl_weighted_and_derivative_forms",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_qst_toth_vs_clausius_clapeyron",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestPhase2AnalyticEngine",
+      "test": "test_toth_nnt_clip_bugfix",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_henry_limits",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_iast_selectivity_and_mass_conservation",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_inversion_roundtrip",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_pure_boundary_conditions",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_pure_derivative_accuracy",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_thermal_isosteric_heat",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "class": "TestThermodynamicEngine",
+      "test": "test_thermodynamic_jacobian_physics",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "physics_validations": [
+    {
+      "name": "V01 \u00b7 Toth loadings non-negative (all species \u00d7 T \u00d7 P)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V02 \u00b7 DSL loadings non-negative (all species \u00d7 T \u00d7 P)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V03 \u00b7 Toth loading strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V04 \u00b7 DSL loading strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V05 \u00b7 Toth loadings decrease with T (exothermic)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V06 \u00b7 DSL loadings decrease with T (exothermic)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V07 \u00b7 Henry limit q/P \u2192 KH (Toth)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V08 \u00b7 Henry limit q/P \u2192 KH (DSL)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V09 \u00b7 Spreading pressure strictly increasing with P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V10 \u00b7 \u03c8-inversion roundtrip exact to 1e-4",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V11 \u00b7 CO\u2082/N\u2082 selectivity > 1 (Toth IAST)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V12 \u00b7 CO\u2082/N\u2082 selectivity > 1 (DSL IAST)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V13 \u00b7 Analytical \u2202q/\u2202P > 0 (Toth CO\u2082)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V14 \u00b7 Analytical \u2202q/\u2202T < 0 (Toth CO\u2082)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V15 \u00b7 Analytical \u2202q/\u2202P > 0 (DSL CO\u2082)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V16 \u00b7 Analytical \u2202q/\u2202T < 0 (DSL CO\u2082)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V17 \u00b7 Toth CO\u2082 q_st \u2208 [20, 50] kJ/mol",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V18 \u00b7 DSL CO\u2082 q_st \u2208 [30, 40] kJ/mol",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V19 \u00b7 ExtendedDSL pure-CO\u2082 limit (y\u2081\u21921)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V20 \u00b7 ExtendedDSL pure-N\u2082 limit (y\u2081\u21920)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V21 \u00b7 ExtendedDSL asymptotic limit = q(1e8 bar)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V22 \u00b7 Gibbs-Duhem residual < 1% over VPSA window",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V23 \u00b7 Analytic Jacobian = central difference (ExtendedDSL)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V24 \u00b7 DSL site 1 + site 2 = total loading",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V25 \u00b7 IAST mass balance q_i = q_tot \u00b7 x_i",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V26 \u00b7 CO\u2082 enriched in adsorbed phase (x\u2081 > y\u2081)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V27 \u00b7 Analytic Toth = base Toth when \u03b1=0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V28 \u00b7 q_st site-weighted \u2192 exact at Henry limit",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V29 \u00b7 Positive working capacity over VPSA window",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V30 \u00b7 Selectivity decreases with T (exothermic)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V31 \u00b7 Toth q_st finite & positive across P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V32 \u00b7 DSL q_st finite & positive across P",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V33 \u00b7 N\u2082 Toth q_st finite & positive",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V34 \u00b7 CO\u2082 q_st > N\u2082 q_st (CO\u2082 binds stronger)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V35 \u00b7 q_st(P) smooth (no discontinuities)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V36 \u00b7 DSL q_st between site binding energies",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V37 \u00b7 q_st low-P \u2192 site-weighted limit",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V38 \u00b7 Toth q_st(\u03b8) decreases with coverage (Cavenati)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V39 \u00b7 q_st > 0 across temperature range",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V40 \u00b7 q_st \u2248 |dH| at T=T0 (Toth CO\u2082)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V41 \u00b7 IAST finite at extreme compositions",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V42 \u00b7 IAST finite at extreme pressures",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V43 \u00b7 Loading finite & positive across T extremes",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V44 \u00b7 Loading finite at extreme pressures",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V45 \u00b7 q(P=0) = 0 exactly",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V46 \u00b7 IAST (y\u2081\u21920) recovers pure N\u2082",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V47 \u00b7 IAST (y\u2081\u21921) recovers pure CO\u2082",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V48 \u00b7 q(P\u2192\u221e) \u2192 qm within 1%",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V49 \u00b7 ExtendedDSL finite & non-negative at P\u21920",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V50 \u00b7 ExtendedDSL robust to extreme (y, T)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V51 \u00b7 Krishnamurthy factory returns DSL + mass",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V52 \u00b7 Cavenati factory returns Toth for 3 species",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V53 \u00b7 Mass scaling q_mass = q_vol / \u03c1 exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V54 \u00b7 eps_t = eps_b + (1-eps_b)\u00b7eps_p exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V55 \u00b7 Conversion utilities reject negatives",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V56 \u00b7 Analytic DSL = base DSL (no \u03b1 in DSL)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V57 \u00b7 b-conversion identity exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V58 \u00b7 MPa \u2194 bar roundtrip exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V59 \u00b7 q_vol \u2192 q_mass identity exact",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V60 \u00b7 All factory objects usable at T0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V61 \u00b7 Cross-model: CO\u2082 > N\u2082 loadings agree",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V62 \u00b7 Cross-model CO\u2082 magnitude within 2\u00d7",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V63 \u00b7 VPSA cycle: adsorption state > cycle swing",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V64 \u00b7 IAST working capacity positive for all feeds",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V65 \u00b7 q_st smooth across VPSA operating range",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V66 \u00b7 Selectivity positive & finite everywhere",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V67 \u00b7 Adsorbed composition x\u2081 \u2208 (0, 1)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V68 \u00b7 IAST spreads pressure equality",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V69 \u00b7 Cross-model \u2202q/\u2202P sign consistent",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "V70 \u00b7 Cross-model \u2202q/\u2202T sign consistent",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "figures": [
+    {
+      "name": "01_pure_isotherms.png",
+      "title": "Fig 1 \u00b7 Pure Isotherms",
+      "failed": false
+    },
+    {
+      "name": "02_derivative_validation.png",
+      "title": "Fig 2 \u00b7 Derivative Validation",
+      "failed": false
+    },
+    {
+      "name": "03_isosteric_heat.png",
+      "title": "Fig 3 \u00b7 Isosteric Heat",
+      "failed": false
+    },
+    {
+      "name": "04_iast_pressure_sweep.png",
+      "title": "Fig 4 \u00b7 IAST Pressure",
+      "failed": false
+    },
+    {
+      "name": "05_iast_composition_sweep.png",
+      "title": "Fig 5 \u00b7 IAST Composition",
+      "failed": false
+    },
+    {
+      "name": "06_extended_dsl_jacobian.png",
+      "title": "Fig 6 \u00b7 Jacobian",
+      "failed": false
+    },
+    {
+      "name": "07_asymptotic_henry_psi.png",
+      "title": "Fig 7 \u00b7 Asymptotic",
+      "failed": false
+    },
+    {
+      "name": "08_gibbs_duhem.png",
+      "title": "Fig 8 \u00b7 Gibbs\u2013Duhem",
+      "failed": false
+    },
+    {
+      "name": "09_vpsa_window.png",
+      "title": "Fig 9 \u00b7 VPSA Window",
+      "failed": false
+    },
+    {
+      "name": "10_temperature_sensitivity.png",
+      "title": "Fig 10 \u00b7 T Sensitivity",
+      "failed": false
+    },
+    {
+      "name": "11_site_decomposition.png",
+      "title": "Fig 11 \u00b7 Site Decomposition",
+      "failed": false
+    },
+    {
+      "name": "12_jacobian_validation.png",
+      "title": "Fig 12 \u00b7 Jacobian Validation",
+      "failed": false
+    },
+    {
+      "name": "13_selectivity_2d.png",
+      "title": "Fig 13 \u00b7 Selectivity Map",
+      "failed": false
+    },
+    {
+      "name": "14_henry_constants.png",
+      "title": "Fig 14 \u00b7 Henry Constants",
+      "failed": false
+    },
+    {
+      "name": "15_working_capacity.png",
+      "title": "Fig 15 \u00b7 Working Capacity",
+      "failed": false
+    },
+    {
+      "name": "16_jacobian_signs.png",
+      "title": "Fig 16 \u00b7 Jacobian Signs",
+      "failed": false
+    },
+    {
+      "name": "17_stability_surface.png",
+      "title": "Fig 17 \u00b7 Stability",
+      "failed": false
+    },
+    {
+      "name": "18_cross_model_validation.png",
+      "title": "Fig 18 \u00b7 Cross-Model",
+      "failed": false
+    },
+    {
+      "name": "19_vpsa_cycle.png",
+      "title": "Fig 19 \u00b7 VPSA Cycle",
+      "failed": false
+    },
+    {
+      "name": "20_dashboard.png",
+      "title": "Fig 20 \u00b7 Dashboard",
+      "failed": false
+    }
+  ]
+}
