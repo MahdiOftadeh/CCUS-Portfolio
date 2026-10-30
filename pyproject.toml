@@ -1,0 +1,10 @@
+﻿[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ccus_portfolio"
+version = "0.5.0"
+description = "Advanced VPSA and CCUS Modeling Engine for Zeolite 13X"
+authors = [{ name = "Mahdi Oftadeh" }]
+dependencies = ["numpy", "scipy", "matplotlib", "pandas"]
