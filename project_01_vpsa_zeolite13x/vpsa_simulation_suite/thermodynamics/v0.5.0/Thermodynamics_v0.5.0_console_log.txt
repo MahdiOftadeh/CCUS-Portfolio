@@ -1,0 +1,188 @@
+==========================================================================
+  THERMODYNAMICS_v0.5.0 — FULL TEST & VISUALIZATION SUITE (100+ CHECKS)
+==========================================================================
+[i] Module    : Thermodynamics_v0.5.0.py
+[i] Output    : C:\Users\Lenovo\Documents\Github1\thermo 4\test_output_Thermodynamics_v0.5.0
+[i] Timestamp : 2026-10-30T17:09:32
+
+========================================================================
+PHASE 1 · UNIT TEST DISCOVERY & EXECUTION
+========================================================================
+[i] 3 classes, 31 methods
+
+    • TestPhase1ReferenceDatabaseCorrected
+    • TestPhase2AnalyticEngine
+    • TestThermodynamicEngine
+test_b_conversion_consistency (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_b_conversion_consistency) ... ok
+test_cavenati_reference_values_at_t0 (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_cavenati_reference_values_at_t0) ... ok
+test_co2_selectivity_over_n2 (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_co2_selectivity_over_n2) ... ok
+test_conversions_roundtrip_and_values (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_conversions_roundtrip_and_values) ... ok
+test_factories_return_correct_types_and_parameters (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_factories_return_correct_types_and_parameters) ... ok
+test_krishnamurthy_mass_basis_scaling (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_krishnamurthy_mass_basis_scaling) ... ok
+test_monotonic_pressure_response (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_monotonic_pressure_response) ... ok
+test_physical_properties (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_physical_properties) ... ok
+test_positive_loadings_all_species (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_positive_loadings_all_species) ... ok
+test_temperature_sensitivity_exothermic (thermo_mod.TestPhase1ReferenceDatabaseCorrected.test_temperature_sensitivity_exothermic) ... ok
+test_analytic_dq_dP_dsl (thermo_mod.TestPhase2AnalyticEngine.test_analytic_dq_dP_dsl) ... ok
+test_analytic_dq_dP_toth (thermo_mod.TestPhase2AnalyticEngine.test_analytic_dq_dP_toth) ... ok
+test_analytic_dq_dT_dsl (thermo_mod.TestPhase2AnalyticEngine.test_analytic_dq_dT_dsl) ... ok
+test_analytic_dq_dT_toth (thermo_mod.TestPhase2AnalyticEngine.test_analytic_dq_dT_toth) ... ok
+test_extended_dsl_jacobian_vs_central_difference (thermo_mod.TestPhase2AnalyticEngine.test_extended_dsl_jacobian_vs_central_difference) ... ok
+test_extended_dsl_jacobian_vs_finite_difference (thermo_mod.TestPhase2AnalyticEngine.test_extended_dsl_jacobian_vs_finite_difference) ... ok
+test_extended_dsl_reduces_to_pure_isotherms (thermo_mod.TestPhase2AnalyticEngine.test_extended_dsl_reduces_to_pure_isotherms) ... ok
+test_iast_analytic_jacobian_consistency (thermo_mod.TestPhase2AnalyticEngine.test_iast_analytic_jacobian_consistency) ... ok
+test_phase1_polish_b_conversion_formula (thermo_mod.TestPhase2AnalyticEngine.test_phase1_polish_b_conversion_formula)
+(1) Exact b-conversion identity: b_P = b_C * 1e5 / (R*T). ... ok
+test_phase1_polish_krishnamurthy_mass_loading_exact (thermo_mod.TestPhase2AnalyticEngine.test_phase1_polish_krishnamurthy_mass_loading_exact)
+(3) Exact float: 3489.44 / 1120 = 3.1155714285714286 mol/kg. ... ok
+test_phase1_polish_selectivity_cavenati_toth (thermo_mod.TestPhase2AnalyticEngine.test_phase1_polish_selectivity_cavenati_toth)
+(2) CO2/N2 selectivity re-referenced to the Cavenati Toth system at ... ok
+test_qst_dsl_weighted_and_derivative_forms (thermo_mod.TestPhase2AnalyticEngine.test_qst_dsl_weighted_and_derivative_forms) ... ok
+test_qst_toth_vs_clausius_clapeyron (thermo_mod.TestPhase2AnalyticEngine.test_qst_toth_vs_clausius_clapeyron) ... ok
+test_toth_nnt_clip_bugfix (thermo_mod.TestPhase2AnalyticEngine.test_toth_nnt_clip_bugfix)
+The hidden Toth bug: clipped nnt must actually reach the isotherm. ... ok
+test_henry_limits (thermo_mod.TestThermodynamicEngine.test_henry_limits)
+At low pressure limit, q / P must match analytical Henry constant. ... ok
+test_iast_selectivity_and_mass_conservation (thermo_mod.TestThermodynamicEngine.test_iast_selectivity_and_mass_conservation)
+Binary IAST must exhibit CO2 selectivity and thermodynamic consistency. ... ok
+test_inversion_roundtrip (thermo_mod.TestThermodynamicEngine.test_inversion_roundtrip)
+P -> psi(P) -> invert(psi) == P. ... ok
+test_pure_boundary_conditions (thermo_mod.TestThermodynamicEngine.test_pure_boundary_conditions)
+Zero pressure yields zero loading. ... ok
+test_pure_derivative_accuracy (thermo_mod.TestThermodynamicEngine.test_pure_derivative_accuracy)
+Analytical derivative dq/dP must match Richardson 4th-order derivative. ... ok
+test_thermal_isosteric_heat (thermo_mod.TestThermodynamicEngine.test_thermal_isosteric_heat)
+Isosteric heat must match specified enthalpy within thermodynamic limits. ... ok
+test_thermodynamic_jacobian_physics (thermo_mod.TestThermodynamicEngine.test_thermodynamic_jacobian_physics)
+Jacobian elements must respect thermodynamic sign conventions. ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.580s
+
+OK
+
+========================================================================
+PHASE 2 · 70 CUSTOM PHYSICS VALIDATIONS
+========================================================================
+   [✓] V01 · Toth loadings non-negative (all species × T × P)
+   [✓] V02 · DSL loadings non-negative (all species × T × P)
+   [✓] V03 · Toth loading strictly increasing with P
+   [✓] V04 · DSL loading strictly increasing with P
+   [✓] V05 · Toth loadings decrease with T (exothermic)
+   [✓] V06 · DSL loadings decrease with T (exothermic)
+   [✓] V07 · Henry limit q/P → KH (Toth)
+   [✓] V08 · Henry limit q/P → KH (DSL)
+   [✓] V09 · Spreading pressure strictly increasing with P
+   [✓] V10 · ψ-inversion roundtrip exact to 1e-4
+   [✓] V11 · CO₂/N₂ selectivity > 1 (Toth IAST)
+   [✓] V12 · CO₂/N₂ selectivity > 1 (DSL IAST)
+   [✓] V13 · Analytical ∂q/∂P > 0 (Toth CO₂)
+   [✓] V14 · Analytical ∂q/∂T < 0 (Toth CO₂)
+   [✓] V15 · Analytical ∂q/∂P > 0 (DSL CO₂)
+   [✓] V16 · Analytical ∂q/∂T < 0 (DSL CO₂)
+   [✓] V17 · Toth CO₂ q_st ∈ [20, 50] kJ/mol
+   [✓] V18 · DSL CO₂ q_st ∈ [30, 40] kJ/mol
+   [✓] V19 · ExtendedDSL pure-CO₂ limit (y₁→1)
+   [✓] V20 · ExtendedDSL pure-N₂ limit (y₁→0)
+   [✓] V21 · ExtendedDSL asymptotic limit = q(1e8 bar)
+   [✓] V22 · Gibbs-Duhem residual < 1% over VPSA window
+   [✓] V23 · Analytic Jacobian = central difference (ExtendedDSL)
+   [✓] V24 · DSL site 1 + site 2 = total loading
+   [✓] V25 · IAST mass balance q_i = q_tot · x_i
+   [✓] V26 · CO₂ enriched in adsorbed phase (x₁ > y₁)
+   [✓] V27 · Analytic Toth = base Toth when α=0
+   [✓] V28 · q_st site-weighted → exact at Henry limit
+   [✓] V29 · Positive working capacity over VPSA window
+   [✓] V30 · Selectivity decreases with T (exothermic)
+   [✓] V31 · Toth q_st finite & positive across P
+   [✓] V32 · DSL q_st finite & positive across P
+   [✓] V33 · N₂ Toth q_st finite & positive
+   [✓] V34 · CO₂ q_st > N₂ q_st (CO₂ binds stronger)
+   [✓] V35 · q_st(P) smooth (no discontinuities)
+   [✓] V36 · DSL q_st between site binding energies
+   [✓] V37 · q_st low-P → site-weighted limit
+   [✓] V38 · Toth q_st(θ) decreases with coverage (Cavenati)
+   [✓] V39 · q_st > 0 across temperature range
+   [✓] V40 · q_st ≈ |dH| at T=T0 (Toth CO₂)
+   [✓] V41 · IAST finite at extreme compositions
+   [✓] V42 · IAST finite at extreme pressures
+   [✓] V43 · Loading finite & positive across T extremes
+   [✓] V44 · Loading finite at extreme pressures
+   [✓] V45 · q(P=0) = 0 exactly
+   [✓] V46 · IAST (y₁→0) recovers pure N₂
+   [✓] V47 · IAST (y₁→1) recovers pure CO₂
+   [✓] V48 · q(P→∞) → qm within 1%
+   [✓] V49 · ExtendedDSL finite & non-negative at P→0
+   [✓] V50 · ExtendedDSL robust to extreme (y, T)
+   [✓] V51 · Krishnamurthy factory returns DSL + mass
+   [✓] V52 · Cavenati factory returns Toth for 3 species
+   [✓] V53 · Mass scaling q_mass = q_vol / ρ exact
+   [✓] V54 · eps_t = eps_b + (1-eps_b)·eps_p exact
+   [✓] V55 · Conversion utilities reject negatives
+   [✓] V56 · Analytic DSL = base DSL (no α in DSL)
+   [✓] V57 · b-conversion identity exact
+   [✓] V58 · MPa ↔ bar roundtrip exact
+   [✓] V59 · q_vol → q_mass identity exact
+   [✓] V60 · All factory objects usable at T0
+   [✓] V61 · Cross-model: CO₂ > N₂ loadings agree
+   [✓] V62 · Cross-model CO₂ magnitude within 2×
+   [✓] V63 · VPSA cycle: adsorption state > cycle swing
+   [✓] V64 · IAST working capacity positive for all feeds
+   [✓] V65 · q_st smooth across VPSA operating range
+   [✓] V66 · Selectivity positive & finite everywhere
+   [✓] V67 · Adsorbed composition x₁ ∈ (0, 1)
+   [✓] V68 · IAST spreads pressure equality
+   [✓] V69 · Cross-model ∂q/∂P sign consistent
+   [✓] V70 · Cross-model ∂q/∂T sign consistent
+
+[summary] 70/70 passed
+
+========================================================================
+PHASE 3 · GENERATING 20 FIGURES
+========================================================================
+[ 1/20] fig01_pure_isotherms
+   [fig] 01_pure_isotherms.png
+[ 2/20] fig02_derivative_validation
+   [fig] 02_derivative_validation.png
+[ 3/20] fig03_isosteric_heat
+   [fig] 03_isosteric_heat.png
+[ 4/20] fig04_iast_pressure_sweep
+   [fig] 04_iast_pressure_sweep.png
+[ 5/20] fig05_iast_composition_sweep
+   [fig] 05_iast_composition_sweep.png
+[ 6/20] fig06_extended_dsl_jacobian
+   [fig] 06_extended_dsl_jacobian.png
+[ 7/20] fig07_asymptotic_henry_psi
+   [fig] 07_asymptotic_henry_psi.png
+[ 8/20] fig08_gibbs_duhem
+   [fig] 08_gibbs_duhem.png
+[ 9/20] fig09_vpsa_window
+   [fig] 09_vpsa_window.png
+[10/20] fig10_temperature_sensitivity
+   [fig] 10_temperature_sensitivity.png
+[11/20] fig11_site_decomposition
+   [fig] 11_site_decomposition.png
+[12/20] fig12_jacobian_validation
+   [fig] 12_jacobian_validation.png
+[13/20] fig13_selectivity_2d
+   [fig] 13_selectivity_2d.png
+[14/20] fig14_henry_constants
+   [fig] 14_henry_constants.png
+[15/20] fig15_working_capacity
+   [fig] 15_working_capacity.png
+[16/20] fig16_jacobian_signs
+   [fig] 16_jacobian_signs.png
+[17/20] fig17_stability_surface
+   [fig] 17_stability_surface.png
+[18/20] fig18_cross_model_validation
+   [fig] 18_cross_model_validation.png
+[19/20] fig19_vpsa_cycle
+   [fig] 19_vpsa_cycle.png
+[20/20] <lambda>
+   [fig] 20_dashboard.png
+
+========================================================================
+PHASE 4 · BUILDING HTML REPORT
+========================================================================
+   [report] C:\Users\Lenovo\Documents\Github1\thermo 4\test_output_Thermodynamics_v0.5.0\report.html (2.67 MB)
+   [json] C:\Users\Lenovo\Documents\Github1\thermo 4\test_output_Thermodynamics_v0.5.0\test_results.json
