@@ -6,7 +6,7 @@
 
 **Bridging Classical Chemical Engineering with Physics-Informed ML , LLM , AI , and Advanced Optimization**
 
-[![Release](https://img.shields.io/badge/Release-v0.4.0-blue.svg?style=for-the-badge)](https://github.com/MahdiOftadeh/CCUS-Portfolio/releases)
+[![Release](https://img.shields.io/badge/Release-v0.5.0-blue.svg?style=for-the-badge)](https://github.com/MahdiOftadeh/CCUS-Portfolio/releases)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Live Report](https://img.shields.io/badge/📊_Live_Validation_Report-GitHub_Pages-success.svg?style=for-the-badge)](https://MahdiOftadeh.github.io/CCUS-Portfolio/)
@@ -34,19 +34,52 @@ This repository serves as a centralized hub for advanced computational research 
 
 ---
 
-## 📊 Visual Showcase
+## 📊 Visual Showcase — v0.5.0
 
 <div align="center" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; justify-items: center; max-width: 100%;">
-  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig11_dashboard.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Thermodynamics Dashboard"></a>
-  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig05_iast.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="IAST Selectivity"></a>
-  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig01_pure_isotherms.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Pure Isotherms"></a>
-  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/"><img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.4.0/v0.4.0_figures/fig03_3d_surfaces.png" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" alt="Heatmaps q(P,T)"></a>
+
+  <div style="grid-column: 1 / -1; width: 100%;">
+    <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">
+      <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.5.0/Thermodynamics_v0.5.0_figures/20_dashboard.png"
+           width="100%"
+           style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+           alt="v0.5.0 Test Results Dashboard">
+    </a>
+  </div>
+
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">
+    <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.5.0/Thermodynamics_v0.5.0_figures/01_pure_isotherms.png"
+         width="100%"
+         style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+         alt="Pure-Component Isotherms — Zeolite 13X">
+  </a>
+
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">
+    <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.5.0/Thermodynamics_v0.5.0_figures/04_iast_pressure_sweep.png"
+         width="100%"
+         style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+         alt="Binary IAST Pressure Sweep">
+  </a>
+
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">
+    <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.5.0/Thermodynamics_v0.5.0_figures/06_extended_dsl_jacobian.png"
+         width="100%"
+         style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+         alt="ExtendedDSL Analytical Jacobian — 6 Panels">
+  </a>
+
+  <a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">
+    <img src="project_01_vpsa_zeolite13x/vpsa_simulation_suite/thermodynamics/v0.5.0/Thermodynamics_v0.5.0_figures/17_stability_surface.png"
+         width="100%"
+         style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+         alt="Stability Surface — 10 Pressure Decades × 150 K">
+  </a>
+
 </div>
 
 <p align="center">
-  <i>All figures are generated automatically by the v0.4.0 validation suite and hosted on the <b><a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">Live Report</a></b>.</i>
+  <i>All figures are generated automatically by the <b>v0.5.0 validation suite</b> — 101/101 checks passed — and hosted on the <b><a href="https://MahdiOftadeh.github.io/CCUS-Portfolio/">Live Report</a></b>.</i>
 </p>
-
 ---
 
 ## 🧠 Core Methodologies & AI Integration
@@ -87,39 +120,66 @@ The VPSA simulation suite is a modular, multi-physics platform. Every engine is 
 ```
 CCUS-Portfolio/
 │
-├── .github/workflows/            # CI/CD pipelines (GitHub Actions)
-├── docs/                         # GitHub Pages (Live Validation Report)
-├── llm/                          # AI & LLM tools (e.g., paper summarizers)
+├── .github/workflows/                    # CI/CD pipelines (GitHub Actions)
+├── docs/                                 # GitHub Pages (Live Validation Report)
+├── llm/                                  # AI & LLM tools (paper summarizers)
 │
-├── project_01_vpsa_zeolite13x/   # Core VPSA CO2/N2 Separation Project
-│   ├── data/                     # Material and cycle configuration data
-│   │   ├── cycle_configs/        # VPSA cycle JSON configurations
-│   │   └── material/             # Literature isotherms & LDF data (CSV/JSON)
-│   ├── docs/                     # Theory and DOE targets
-│   ├── outputs/                  # Generated datasets, figures, and tables
-│   ├── scripts/                  # Execution & optimization scripts
+├── project_01_vpsa_zeolite13x/           # Core VPSA CO2/N2 Separation Project
+│   ├── data/                             # Material and cycle configuration data
+│   │   ├── cycle_configs/                # VPSA cycle JSON configurations
+│   │   └── material/                     # Literature isotherms & LDF data (CSV/JSON)
+│   ├── docs/                             # Theory and DOE targets
+│   ├── outputs/                          # Generated datasets, figures, and tables
+│   ├── scripts/                          # Execution & optimization scripts
 │   │   ├── run_breakthrough.py
 │   │   ├── run_vpsa_cycle.py
 │   │   └── run_optimization.py
-│   ├── tests/                    # Integration tests (isotherms, mass balance)
+│   ├── tests/                            # Integration tests (isotherms, mass balance)
 │   │
-│   ├── vpsa_commercial_suite/    # Commercial-grade dashboards and reports
-│   │   ├── figures/              # High-level UI dashboards
+│   ├── vpsa_commercial_suite/            # Commercial-grade dashboards and reports
+│   │   ├── figures/                      # High-level UI dashboards
 │   │   └── reports/
 │   │
-│   └── vpsa_simulation_suite/    # Core Python Package
-│       ├── auxiliary/            # Compressor maps & units network
-│       ├── benchmarks/           # Jupyter notebooks for validation
-│       ├── economics/            # Techno-economic KPIs
-│       ├── mass_transfer/        # LDF kinetics
-│       ├── optimization/         # DOE, Pareto, Surrogates
-│       ├── solvers/              # CSS, Breakthrough, Cycle solvers
-│       ├── thermodynamics/       # 🌟 Thermodynamics Engine
-│       │   ├── archive/v0.1.0/   # Historical versions
-│       │   ├── v0.3.0/           # Legacy suite
-│       │   └── v0.4.0/           # Latest Analytic Engine & 57-check tests
-│       ├── transport/            # Hydrodynamics & kinetics
-│       └── visualization/        # Plotting utilities
+│   └── vpsa_simulation_suite/            # Core Python Package
+│       ├── auxiliary/                    # Compressor maps & units network
+│       ├── benchmarks/                   # Jupyter notebooks for validation
+│       ├── economics/                    # Techno-economic KPIs
+│       ├── mass_transfer/                # LDF kinetics
+│       ├── optimization/                 # DOE, Pareto, Surrogates
+│       ├── solvers/                      # CSS, Breakthrough, Cycle solvers
+│       ├── thermodynamics/               # 🌟 Thermodynamics Engine
+│       │   ├── archive/v0.1.0/           # Historical baseline
+│       │   ├── v0.3.0/                   # Legacy suite
+│       │   ├── v0.4.0/                   # Analytic engine · 57-check tests
+│       │   └── v0.5.0/                   # ⭐ LATEST · 101-check tests + 20 figures
+│       │       ├── Thermodynamics_v0.5.0.py                    # Engine
+│       │       ├── Thermodynamics_v0.5.0_test.py               # 101-check validation suite
+│       │       ├── Thermodynamics_v0.5.0_report.html           # Self-contained HTML report
+│       │       ├── Thermodynamics_v0.5.0_test_results.json     # Machine-readable diagnostics
+│       │       ├── Thermodynamics_v0.5.0_console_log.txt       # Verbatim stdout transcript
+│       │       └── Thermodynamics_v0.5.0_figures/              # 20 publication-quality PNGs
+│       │           ├── 01_pure_isotherms.png
+│       │           ├── 02_derivative_validation.png
+│       │           ├── 03_isosteric_heat.png
+│       │           ├── 04_iast_pressure_sweep.png
+│       │           ├── 05_iast_composition_sweep.png
+│       │           ├── 06_extended_dsl_jacobian.png
+│       │           ├── 07_asymptotic_henry_psi.png
+│       │           ├── 08_gibbs_duhem.png
+│       │           ├── 09_vpsa_window.png
+│       │           ├── 10_temperature_sensitivity.png
+│       │           ├── 11_site_decomposition.png
+│       │           ├── 12_jacobian_validation.png
+│       │           ├── 13_selectivity_2d.png
+│       │           ├── 14_henry_constants.png
+│       │           ├── 15_working_capacity.png
+│       │           ├── 16_jacobian_signs.png
+│       │           ├── 17_stability_surface.png
+│       │           ├── 18_cross_model_validation.png
+│       │           ├── 19_vpsa_cycle.png
+│       │           └── 20_dashboard.png
+│       ├── transport/                    # Hydrodynamics & kinetics
+│       └── visualization/                # Plotting utilities
 │
 └── README.md
 ```
