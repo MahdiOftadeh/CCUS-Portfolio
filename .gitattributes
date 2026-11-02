@@ -9,3 +9,4 @@
 *.txt   text eol=lf
 *.cfg   text eol=lf
 *.ini   text eol=lf
+*.html linguist-detectable=false
