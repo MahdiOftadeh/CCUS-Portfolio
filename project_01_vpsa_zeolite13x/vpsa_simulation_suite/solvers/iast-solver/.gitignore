@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+.idea/
+.vscode/
+.DS_Store
+# Local backup files
+*.bak
+*.orig
+*.rej
