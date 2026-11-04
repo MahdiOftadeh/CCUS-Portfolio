@@ -274,3 +274,9 @@ git_history_stats.txt
 
 tree.txt
 docs/index_backup.html
+
+# Local bundle artifacts (generated for offline transfer)
+*.bundle
+
+# Local clone of bundle (duplicate repository)
+/CCUS-Portfolio/
