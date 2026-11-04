@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iast-solver"
+version = "0.1.0"
+description = "Ideal Adsorbed Solution Theory (IAST) for N-component adsorption equilibria"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Your Name" }]
+keywords = ["IAST", "adsorption", "thermodynamics", "separation"]
+dependencies = ["numpy>=1.22", "scipy>=1.8"]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[project.urls]
+Repository = "https://github.com/YOUR-USERNAME/iast-solver"
+
+[tool.setuptools.packages.find]
+include = ["iast*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
